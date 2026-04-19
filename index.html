@@ -191,6 +191,7 @@
       <div class="foot__controls">
         <button class="chip" id="demoBtn" type="button">DEMO</button>
         <button class="chip chip--ghost" id="clearBtn" type="button">CLEAR</button>
+        <button class="chip chip--help" id="helpBtn" type="button" title="Guida (?)">?</button>
       </div>
       <div class="foot__shortcuts">
         <kbd>SPACE</kbd> play · <kbd>T</kbd> tap · <kbd>1-4</kbd> pattern · <kbd>↑↓</kbd> traccia · <kbd>M</kbd>/<kbd>S</kbd> mute/solo · <kbd>C</kbd> clear · <kbd>⌘Z</kbd> undo
@@ -218,6 +219,99 @@
         <div class="modal__actions">
           <button class="chip chip--ghost" id="bounceCancel" type="button">ANNULLA</button>
           <button class="chip" id="bounceConfirm" type="button">RENDER</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= HELP MODAL ================= -->
+    <div class="modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="modal__backdrop" id="helpBackdrop"></div>
+      <div class="modal__box modal__box--help">
+        <div class="help__head">
+          <h3 class="modal__title" id="helpTitle">GUIDA · DRUMAPP PRO</h3>
+          <button class="help__close" id="helpClose" type="button" aria-label="Chiudi">×</button>
+        </div>
+        <div class="help__body">
+
+          <section class="help__sec">
+            <h4>▶ PLAY &amp; TRANSPORT</h4>
+            <p>Clicca il cerchio nero grande, o premi <kbd>SPACE</kbd>. Il BPM si regola con lo slider, o batti <kbd>T</kbd> a ritmo per il tap tempo (almeno 2 tap).</p>
+            <p>Il primo click su qualsiasi parte della pagina sblocca l'audio — è una regola del browser, non c'è modo di aggirarla.</p>
+          </section>
+
+          <section class="help__sec">
+            <h4>◼ SEQUENCER &amp; EDIT MODE</h4>
+            <p>La griglia ha 8 tracce (kick, snare, hi-hat…) × 16 step (o più). Il selettore <strong>EDIT</strong> in basso cambia cosa fa il click su uno step:</p>
+            <ul class="help__list">
+              <li><strong>TRIG</strong> <span>(default)</span> — click = attiva/spegne lo step.</li>
+              <li><strong>VEL</strong> — click su uno step acceso e <em>trascina verticalmente</em> per impostare la velocity (volume di quel singolo colpo). La barra colorata che sale dal basso mostra il livello. Trascini su per alzare, giù per abbassare.</li>
+              <li><strong>PROB</strong> — stessa cosa ma imposta la probabilità 0–100%. A 50% lo step suona metà delle volte. Utile per variazioni casuali che non stancano l'orecchio.</li>
+              <li><strong>RATCH</strong> — imposta ratchet 1× / 2× / 3× / 4×. Il colpo si ripete N volte dentro lo stesso step. Tipico dei hi-hat trap.</li>
+              <li><strong>NUDGE</strong> — sposta lo step ±50 ms fuori dalla griglia. Micro-timing per sentirlo più "umano" o per creare swing manuale su singole tracce.</li>
+            </ul>
+          </section>
+
+          <section class="help__sec">
+            <h4>♫ PATTERN &amp; SONG</h4>
+            <p><strong>A / B / C / D</strong> sono 4 pattern live in memoria. Clicca per switchare durante il play, o usa <kbd>1</kbd>–<kbd>4</kbd>, o <kbd>[</kbd> <kbd>]</kbd> per prev/next.</p>
+            <p>La riga <strong>SEQUENCE</strong> è la playlist: clicca uno slot per cambiarlo (A→B→C→D→A). <kbd>+</kbd> / <kbd>−</kbd> allungano/accorciano. Poi attiva <strong>SONG</strong> nella modebar per far suonare la sequenza invece del solo pattern corrente.</p>
+          </section>
+
+          <section class="help__sec">
+            <h4>⚙ PARAMETRI PER TRACCIA</h4>
+            <p>Click sul <strong>nome</strong> della traccia (es. KICK) per selezionarla. In alto appaiono i controlli:</p>
+            <ul class="help__list">
+              <li><strong>VOL</strong> volume · <strong>PAN</strong> stereo (doppio click = centro)</li>
+              <li><strong>PITCH</strong> ±12 semitoni — abbassa il kick per il classico "boom 808"</li>
+              <li><strong>DECAY</strong> 0.4×–2.5× — più corto o più lungo</li>
+              <li><strong>FILTER</strong> LP/HP + <strong>CUTOFF</strong> — tipico filter-sweep durante build-up</li>
+              <li><strong>M</strong> mute · <strong>S</strong> solo (anche da tastiera: <kbd>M</kbd> <kbd>S</kbd> sulla traccia attiva)</li>
+            </ul>
+          </section>
+
+          <section class="help__sec">
+            <h4>💾 SAVE &amp; EXPORT</h4>
+            <ul class="help__list">
+              <li><strong>SLOT A/B/C/D</strong> — tap per caricare, <em>hold 500 ms</em> per salvare (tutto il set)</li>
+              <li><strong>EXPORT / IMPORT</strong> — file <code>.json</code> con pattern, parametri, song sequence</li>
+              <li><strong>SHARE</strong> — URL compatto col pattern corrente, si copia in automatico</li>
+              <li><strong>BOUNCE</strong> — render offline in <code>.wav</code>, scegli 2/4/8 loop o intera song</li>
+              <li><strong>REC</strong> — cattura <em>live</em> tutto ciò che senti (knob twist, pattern switch). Salva <code>.webm</code>. Bottone diventa rosso pulsante con timer.</li>
+              <li><strong>MIDI</strong> — invia note General MIDI sulla prima porta disponibile (kick=36, snare=38…)</li>
+              <li><strong>COPY / PASTE</strong> — duplica il pattern corrente per ritoccarlo in un altro slot</li>
+              <li><strong>UNDO / REDO</strong> — <kbd>⌘Z</kbd> / <kbd>⌘⇧Z</kbd>, fino a 40 stati indietro</li>
+            </ul>
+          </section>
+
+          <section class="help__sec">
+            <h4>⌨ SHORTCUTS</h4>
+            <div class="help__kbd">
+              <span><kbd>SPACE</kbd> play</span>
+              <span><kbd>T</kbd> tap tempo</span>
+              <span><kbd>1</kbd>-<kbd>4</kbd> pattern</span>
+              <span><kbd>[</kbd> <kbd>]</kbd> pattern prec/succ</span>
+              <span><kbd>↑</kbd> <kbd>↓</kbd> traccia</span>
+              <span><kbd>M</kbd> mute · <kbd>S</kbd> solo</span>
+              <span><kbd>C</kbd> clear · <kbd>D</kbd> demo</span>
+              <span><kbd>⌘Z</kbd> undo · <kbd>⌘⇧Z</kbd> redo</span>
+              <span><kbd>?</kbd> questa guida · <kbd>ESC</kbd> chiudi</span>
+            </div>
+          </section>
+
+          <section class="help__sec help__sec--tips">
+            <h4>💡 TIP RAPIDI</h4>
+            <ul class="help__list">
+              <li>Per trap hi-hat: modalità <strong>RATCH</strong>, imposta 2× o 3× sugli offbeat.</li>
+              <li>Per groove umano: un po' di <strong>SWING</strong> (25–45%) + <strong>HUMANIZE</strong> on.</li>
+              <li>Per variazione non ripetitiva: qualche step col <strong>PROB</strong> a 60–80%.</li>
+              <li>Stereo tipo drum-kit vero: kick e snare al centro, hi-hat R30, clap L40, cowbell R60.</li>
+              <li>Workflow song: copia A → incolla in B → varia. Costruisci sequence <code>A A B A A B C D</code>. REC on, PLAY, hai 8 misure.</li>
+            </ul>
+          </section>
+
+        </div>
+        <div class="modal__actions">
+          <button class="chip" id="helpClose2" type="button" onclick="document.getElementById('helpModal').classList.remove('modal--open')">HO CAPITO</button>
         </div>
       </div>
     </div>

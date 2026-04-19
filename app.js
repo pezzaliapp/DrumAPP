@@ -1051,14 +1051,31 @@
   // ============================================================
   let lastReadoutStep = null;
 
+  /** Testo guida contestuale per ogni edit mode */
+  const EDIT_HINTS = {
+    trig:  'TRIG · click su uno step per accenderlo/spegnerlo',
+    vel:   'VEL · click + trascina verticalmente su uno step per la velocity (volume del singolo colpo)',
+    prob:  'PROB · click + trascina per la probabilità 0–100% (a 50% lo step suona metà delle volte)',
+    ratch: 'RATCH · click + trascina per ratchet 1–4× (ripete lo stesso step, utile per hi-hat trap)',
+    nudge: 'NUDGE · click + trascina per spostare lo step ±50 ms fuori dalla griglia',
+  };
+
   function updateStepReadout(trackIdx, stepIdx) {
     const el = document.getElementById('stepReadout');
     if (!el) return;
-    const cell = patterns[currentPattern][trackIdx][stepIdx];
-    if (!cell) {
-      el.textContent = '—';
+    // Se non passato uno step specifico, mostra l'hint dell'edit mode
+    if (trackIdx === undefined || stepIdx === undefined) {
+      el.textContent = EDIT_HINTS[editMode] || '—';
+      el.classList.add('step-readout--hint');
       return;
     }
+    const cell = patterns[currentPattern][trackIdx][stepIdx];
+    if (!cell) {
+      el.textContent = EDIT_HINTS[editMode] || '—';
+      el.classList.add('step-readout--hint');
+      return;
+    }
+    el.classList.remove('step-readout--hint');
     const track = TRACK_DEFS[trackIdx].name;
     const parts = [
       `${track} • step ${stepIdx + 1}`,
@@ -1133,6 +1150,18 @@
   function updateClipboardUI() {
     const pb = document.getElementById('pasteBtn');
     if (pb) pb.classList.toggle('chip--armed', !!patternClipboard);
+  }
+
+  // ============================================================
+  // 15d) HELP MODAL
+  // ============================================================
+  function openHelp() {
+    const m = document.getElementById('helpModal');
+    if (m) m.classList.add('modal--open');
+  }
+  function closeHelp() {
+    const m = document.getElementById('helpModal');
+    if (m) m.classList.remove('modal--open');
   }
 
   // ============================================================
@@ -2040,11 +2069,20 @@
     if (songAddBtn) songAddBtn.addEventListener('click', songAddSlot);
     if (songRemoveBtn) songRemoveBtn.addEventListener('click', songRemoveSlot);
 
+    // --- Help modal ---
+    const helpBtn = document.getElementById('helpBtn');
+    const helpClose = document.getElementById('helpClose');
+    const helpBackdrop = document.getElementById('helpBackdrop');
+    if (helpBtn) helpBtn.addEventListener('click', openHelp);
+    if (helpClose) helpClose.addEventListener('click', closeHelp);
+    if (helpBackdrop) helpBackdrop.addEventListener('click', closeHelp);
+
     // --- Edit mode ---
     document.querySelectorAll('[data-edit-mode]').forEach(btn => {
       btn.addEventListener('click', () => {
         editMode = btn.dataset.editMode;
         document.querySelectorAll('[data-edit-mode]').forEach(b => b.classList.toggle('mode-btn--on', b === btn));
+        updateStepReadout(); // mostra l'hint del nuovo mode
       });
     });
 
@@ -2103,6 +2141,13 @@
     // --- Keyboard ---
     document.addEventListener('keydown', e => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) return;
+      // Help / esc sempre attivi
+      if (e.key === '?' || (e.key === '/' && e.shiftKey)) { e.preventDefault(); openHelp(); return; }
+      if (e.key === 'Escape') {
+        closeHelp();
+        closeBounceDialog();
+        return;
+      }
       if (e.code === 'Space') { e.preventDefault(); toggleTransport(); return; }
       if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undo(); return; }
       if ((e.metaKey || e.ctrlKey) && (e.key === 'Z' || (e.shiftKey && e.key === 'z'))) { e.preventDefault(); redo(); return; }
@@ -2155,6 +2200,9 @@
 
     // Active track iniziale
     setActiveTrack(0);
+
+    // Hint contestuale iniziale
+    updateStepReadout();
   });
 
 })();
