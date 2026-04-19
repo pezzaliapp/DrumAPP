@@ -190,6 +190,7 @@
     <footer class="foot">
       <div class="foot__controls">
         <button class="chip" id="demoBtn" type="button">DEMO</button>
+        <button class="chip" id="demosBtn" type="button" title="Libreria di 14 demo importabili">DEMOS</button>
         <button class="chip chip--ghost" id="clearBtn" type="button">CLEAR</button>
         <button class="chip chip--help" id="helpBtn" type="button" title="Guida (?)">?</button>
       </div>
@@ -219,6 +220,31 @@
         <div class="modal__actions">
           <button class="chip chip--ghost" id="bounceCancel" type="button">ANNULLA</button>
           <button class="chip" id="bounceConfirm" type="button">RENDER</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= DEMO LIBRARY MODAL ================= -->
+    <div class="modal" id="demosModal" role="dialog" aria-modal="true" aria-labelledby="demosTitle">
+      <div class="modal__backdrop" id="demosBackdrop"></div>
+      <div class="modal__box modal__box--demos">
+        <div class="help__head">
+          <h3 class="modal__title" id="demosTitle">DEMO LIBRARY · 14 SET</h3>
+          <button class="help__close" id="demosClose" type="button" aria-label="Chiudi">×</button>
+        </div>
+        <div class="demos__body">
+          <p class="demos__intro">
+            Click su una demo per caricarla al volo (senza scaricare il file).
+            Attiva poi <strong>SONG</strong> nella modebar e premi PLAY.<br>
+            <span class="demos__warn">⚠️ Questo sovrascriverà pattern, parametri e song sequence correnti. Salva prima in uno SLOT (hold 500 ms) se hai qualcosa da preservare.</span>
+          </p>
+          <div class="demos__grid" id="demosGrid">
+            <!-- popolato dinamicamente -->
+          </div>
+        </div>
+        <div class="modal__actions">
+          <a class="chip chip--ghost" href="examples/" target="_blank" rel="noopener">↓ Scarica JSON singoli</a>
+          <button class="chip" id="demosClose2" type="button" onclick="document.getElementById('demosModal').classList.remove('modal--open')">CHIUDI</button>
         </div>
       </div>
     </div>

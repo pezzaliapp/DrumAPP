@@ -1165,6 +1165,78 @@
   }
 
   // ============================================================
+  // 15e) DEMO LIBRARY (fetch JSON dalla cartella examples/)
+  // ============================================================
+  const DEMO_LIBRARY = [
+    // Generi moderni
+    { file: 'demo-house.json',            name: 'House / Techno',       bpm: 124, tag: 'modern', desc: '4/4 dritto, build + drop' },
+    { file: 'demo-trap.json',             name: 'Trap moderno',         bpm: 140, tag: 'modern', desc: '808 + ratchet hats' },
+    { file: 'demo-boombap.json',          name: 'Boom Bap anni 90',     bpm:  90, tag: 'modern', desc: 'Swing 52% Dilla style' },
+    { file: 'demo-dnb.json',              name: 'DNB / Amen break',     bpm: 170, tag: 'modern', desc: 'Jungle, ghost snare al 7' },
+    { file: 'demo-makesomenoise.json',    name: 'NYC Hip-Hop 2011',     bpm: 105, tag: 'modern', desc: 'Kick doppio, cowbell' },
+    { file: 'demo-ukhardcore.json',       name: 'UK Hardcore 92-93',    bpm: 140, tag: 'modern', desc: 'Pre-jungle rave' },
+    { file: 'demo-onedrop.json',          name: 'Dub / Reggae',         bpm:  80, tag: 'modern', desc: '★ Beat sul 3, filosofia invertita' },
+    // Break storici
+    { file: 'demo-billiejean.json',       name: 'Billie Jean-style',    bpm: 117, tag: 'classic', desc: '1982 · Linn LM-1 metronomica' },
+    { file: 'demo-funkydrummer.json',     name: 'Funky Drummer-style',  bpm: 103, tag: 'classic', desc: '1970 · break piu campionato' },
+    { file: 'demo-levee.json',            name: 'Levee Breaks-style',   bpm:  72, tag: 'classic', desc: '1971 · Bonham massiccio' },
+    { file: 'demo-apache.json',           name: 'Apache-style',         bpm: 112, tag: 'classic', desc: '1973 · genesi hip-hop' },
+    { file: 'demo-impeach.json',          name: 'Impeach-style',        bpm: 100, tag: 'classic', desc: '1973 · drum-solo pulito' },
+    { file: 'demo-ashleysroachclip.json', name: "Ashley's Roachclip",   bpm: 100, tag: 'classic', desc: '1974 · funky con open hat' },
+    { file: 'demo-synthsub.json',         name: 'Synthetic Sub-style',  bpm:  91, tag: 'classic', desc: '1973 · sparso, spazio per voce' },
+  ];
+
+  function openDemos() {
+    const m = document.getElementById('demosModal');
+    if (!m) return;
+    // Popola la grid se non già fatto
+    const grid = document.getElementById('demosGrid');
+    if (grid && grid.children.length === 0) {
+      DEMO_LIBRARY.forEach(d => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'demo-card demo-card--' + d.tag;
+        card.dataset.demo = d.file;
+        card.innerHTML = `
+          <div class="demo-card__head">
+            <span class="demo-card__bpm">${d.bpm}</span>
+            <span class="demo-card__tag">${d.tag === 'classic' ? '🏛' : '🎛'}</span>
+          </div>
+          <div class="demo-card__name">${d.name}</div>
+          <div class="demo-card__desc">${d.desc}</div>
+        `;
+        card.addEventListener('click', () => loadDemoFile(d.file, d.name));
+        grid.appendChild(card);
+      });
+    }
+    m.classList.add('modal--open');
+  }
+
+  function closeDemos() {
+    const m = document.getElementById('demosModal');
+    if (m) m.classList.remove('modal--open');
+  }
+
+  async function loadDemoFile(file, displayName) {
+    try {
+      showToast(`Carico ${displayName}…`);
+      const resp = await fetch('examples/' + file);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+      if (applyFull(data)) {
+        pushHistory();
+        closeDemos();
+        showToast(`${displayName} caricata · attiva SONG + PLAY`);
+      } else {
+        showToast('JSON non valido', true);
+      }
+    } catch (e) {
+      console.error(e);
+      showToast(`Errore caricamento: ${e.message}`, true);
+    }
+  }
+
+  // ============================================================
   // 15c) SONG EDITOR (sequence A/B/C/D con click-to-cycle)
   // ============================================================
   const SONG_ORDER = ['A','B','C','D'];
@@ -2077,6 +2149,14 @@
     if (helpClose) helpClose.addEventListener('click', closeHelp);
     if (helpBackdrop) helpBackdrop.addEventListener('click', closeHelp);
 
+    // --- Demo library modal ---
+    const demosBtn = document.getElementById('demosBtn');
+    const demosClose = document.getElementById('demosClose');
+    const demosBackdrop = document.getElementById('demosBackdrop');
+    if (demosBtn) demosBtn.addEventListener('click', openDemos);
+    if (demosClose) demosClose.addEventListener('click', closeDemos);
+    if (demosBackdrop) demosBackdrop.addEventListener('click', closeDemos);
+
     // --- Edit mode ---
     document.querySelectorAll('[data-edit-mode]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -2145,6 +2225,7 @@
       if (e.key === '?' || (e.key === '/' && e.shiftKey)) { e.preventDefault(); openHelp(); return; }
       if (e.key === 'Escape') {
         closeHelp();
+        closeDemos();
         closeBounceDialog();
         return;
       }
