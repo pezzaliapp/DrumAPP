@@ -14,14 +14,19 @@ Set di esempio importabili nell'app via il bottone **IMPORT**. Ognuno è pensato
 | [`demo-boombap.json`](demo-boombap.json) | Boom Bap '90s       |  90 | Swing alto, feel "lazy" Dilla |
 | [`demo-dnb.json`](demo-dnb.json)         | DNB / Amen Break    | 170 | Breakbeat jungle, ghost snare |
 | [`demo-makesomenoise.json`](demo-makesomenoise.json) | NYC Hip-Hop 2011 style | 105 | Kick doppio + rim shaker + cowbell |
+| [`demo-ukhardcore.json`](demo-ukhardcore.json) | UK Breakbeat Hardcore '92-'93 | 140 | Pre-jungle, 4/4 rave + Amen choppato |
+| [`demo-onedrop.json`](demo-onedrop.json) | Dub / Reggae One-Drop | 80  | ★ Beat sul 3, filosofia invertita |
 
 ### Break storici (ricostruzioni ritmiche)
 | File | Ispirato a | Anno | BPM | Perché è iconico |
 |---|---|---|---|---|
 | [`demo-billiejean.json`](demo-billiejean.json)     | Billie Jean (MJ)            | 1982 | 117 | Linn LM-1 metronomica, kick sincopato |
-| [`demo-funkydrummer.json`](demo-funkydrummer.json) | Funky Drummer (J. Brown)    | 1970 | 103 | Break più campionato della storia — ghost notes + open hat |
+| [`demo-funkydrummer.json`](demo-funkydrummer.json) | Funky Drummer (J. Brown)    | 1970 | 103 | Break più campionato della storia — ghost + open hat |
 | [`demo-levee.json`](demo-levee.json)               | When the Levee Breaks (LZ)  | 1971 |  72 | Bonham massiccio, half-time, decay lunghi |
-| [`demo-apache.json`](demo-apache.json)             | Apache (Incredible Bongo B.)| 1973 | 112 | Il break che Kool Herc mixava al Bronx = genesi dell'hip-hop |
+| [`demo-apache.json`](demo-apache.json)             | Apache (Incredible Bongo B.)| 1973 | 112 | Il break che Kool Herc mixava al Bronx = genesi hip-hop |
+| [`demo-impeach.json`](demo-impeach.json)           | Impeach the President (Honey Drippers) | 1973 | 100 | Intro drum-solo iconica, pulizia chirurgica |
+| [`demo-ashleysroachclip.json`](demo-ashleysroachclip.json) | Ashley's Roachclip (Soul Searchers) | 1974 | 100 | Funky con open hat signature |
+| [`demo-synthsub.json`](demo-synthsub.json)         | Synthetic Substitution (Melvin Bliss) | 1973 | 91 | Break sparso che lascia spazio alla voce |
 
 > ⚠️ **Disclaimer per i break storici**: questi file ricostruiscono lo *scheletro ritmico* (kick/snare/percussion placement) dei brani indicati. **Non** riproducono le melodie, voci, basso, arrangement, sample o timbri specifici, che restano protetti dal copyright dei rispettivi autori/editori. La drum programming è grammatica musicale generale.
 
@@ -158,7 +163,37 @@ Ho mappato i timbri come fa tipicamente chi "interpreta" Apache in una drum mach
 
 Il Pattern C è il "break di Kool Herc": kick ridotto, percussioni in roll. È il momento in cui i DJ abbassavano la batteria principale e facevano rappare sopra le congas. Per sentirlo: durante il Pattern C, muta il kick (premi `M` con la traccia KICK attiva) → hai ricostruito l'esperienza di un block party 1975.
 
----
+### 📀 `demo-impeach.json` · 100 BPM, "Impeach the President"-style
+
+Ispirato al break di apertura di *Impeach the President* (The Honey Drippers, 1973). La lezione di questo break è la **pulizia**: kick sparse (1 e "and of 2"), snare backbeat "crack", hi-hat 16th steady. Niente ghost, niente fill. Proprio la semplicità l'ha reso uno dei break più campionati nel golden age hip-hop.
+
+**Prova**: suona benissimo anche a tempo diverso — porta il BPM a 88 e diventa boom bap West Coast.
+
+### 📀 `demo-ashleysroachclip.json` · 100 BPM, "Ashley's Roachclip"-style
+
+Ispirato a *Ashley's Roachclip* (The Soul Searchers, 1974). A parità di BPM con Impeach, ha un groove più funky: kick più ricco (1, "and of 1", 11), ghost snare in mezzo, e soprattutto **open hat al step 6** come Funky Drummer. È il "cugino più movimentato" di Impeach.
+
+**Prova**: porta volume OPEN HH a 0. Il groove diventa più piatto — l'open hat al 6 è il trucco che si porta dal 1970 al 2020.
+
+### 📀 `demo-synthsub.json` · 91 BPM, "Synthetic Substitution"-style
+
+Ispirato a *Synthetic Substitution* (Melvin Bliss, 1973). Il punto di forza è lo **spazio**: kick sincopato su 0, 3, 8, 11, ma hi-hat solo in 8th (non 16th come gli altri break). Questo respiro è il motivo per cui i rapper golden age lo hanno scelto così tanto — c'è aria dentro cui mettere parole.
+
+**Prova**: imposta lo stesso pattern passando il BPM a 85 e aggiungi un po' di swing (20%) → diventa un loop boom-bap perfetto per un verso lungo.
+
+### 📀 `demo-onedrop.json` · 80 BPM · ★ filosofia ritmica invertita
+
+Questa non è una ricostruzione di un brano specifico ma del **principio ritmico** del reggae classico (Studio One, Marley, Sly & Robbie). È la demo più interessante per capire quanto una drum machine pro sia flessibile: se sposti il "centro di gravità" ritmico, cambi genere.
+
+Il colpo di genio del reggae è **mettere kick e snare insieme sul beat 3**, non sull'1. Nel sequencer: solo step 8 è forte. Il resto del pattern è hi-hat skank (step 4 e 12) + rim shot come cross-stick. Tutto ciò che vedi *assente* è il groove.
+
+**Test che spacca la testa**: ascolta Pattern A. Poi cliccando Pattern C passi a "rockers" (aggiunge kick sull'1 in stile Sly & Robbie anni '70). Stesso BPM, stessa strumentazione, due epoche reggae diverse.
+
+### 📀 `demo-ukhardcore.json` · 140 BPM, rave UK 1992-93 (pre-jungle)
+
+L'era dell'**hardcore UK** (The Prodigy primi EP, SL2, Shut Up & Dance, Acen, Rufige Kru) dove il breakbeat incontrava la 4/4 rave. Qui **Pattern A è 4/4 rave dritto** (stile hardcore), **Pattern B è Amen choppato** con ghost snare (stile jungle nascente), **Pattern C li fonde con ratchet aggressivi**, **Pattern D è un fill pre-drop esplosivo** (snare roll 4× + tom fill). Nel 1992-93 questi due mondi coesistevano nello stesso brano — ascolti la transizione da hardcore a jungle in un singolo loop.
+
+**Trucco mind-blowing**: finito l'ascolto, alza il BPM a 170 e muta il kick durante il Pattern B. Hai appena ricostruito la transizione storica hardcore → drum & bass che è avvenuta tra il 1993 e il 1995. Un cambio di velocità + un kick muto = nuovo genere.
 
 ---
 

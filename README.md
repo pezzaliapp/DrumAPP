@@ -171,26 +171,29 @@ Export JSON versione 2:
 
 ## 🎁 Esempi (import pronti)
 
-Nella cartella [`examples/`](examples/) trovi **9 set completi** importabili col bottone **IMPORT**:
+Nella cartella [`examples/`](examples/) trovi **14 set completi** importabili col bottone **IMPORT** — una piccola enciclopedia della drum programming popolare.
 
-**Generi moderni** (pattern originali che dimostrano le feature Pro):
-- [`demo-house.json`](examples/demo-house.json) · 124 BPM house/techno
-- [`demo-trap.json`](examples/demo-trap.json) · 140 BPM trap con ratchet
-- [`demo-boombap.json`](examples/demo-boombap.json) · 90 BPM swing 52% stile Dilla
-- [`demo-dnb.json`](examples/demo-dnb.json) · 170 BPM Amen-ispirato
-- [`demo-makesomenoise.json`](examples/demo-makesomenoise.json) · 105 BPM NYC hip-hop
+**Generi moderni** (7 file):
+- `demo-house.json` · 124 BPM · house/techno con build+drop
+- `demo-trap.json` · 140 BPM · trap con ratchet hats
+- `demo-boombap.json` · 90 BPM · swing 52% stile Dilla
+- `demo-dnb.json` · 170 BPM · Amen-ispirato
+- `demo-makesomenoise.json` · 105 BPM · NYC hip-hop
+- `demo-ukhardcore.json` · 140 BPM · UK rave/breakbeat '92-'93
+- `demo-onedrop.json` · 80 BPM · ★ reggae one-drop (beat sul 3)
 
-**Break storici** (ricostruzioni ritmiche di drum break iconici):
-- [`demo-billiejean.json`](examples/demo-billiejean.json) · 117 BPM, stile Linn LM-1 1982
-- [`demo-funkydrummer.json`](examples/demo-funkydrummer.json) · 103 BPM, stile Clyde Stubblefield 1970
-- [`demo-levee.json`](examples/demo-levee.json) · 72 BPM, stile Bonham 1971
-- [`demo-apache.json`](examples/demo-apache.json) · 112 BPM, break originario hip-hop 1973
+**Break storici** (7 file, ricostruzioni ritmiche):
+- `demo-billiejean.json` · 117 BPM · Linn LM-1 1982
+- `demo-funkydrummer.json` · 103 BPM · Clyde Stubblefield 1970
+- `demo-levee.json` · 72 BPM · Bonham 1971
+- `demo-apache.json` · 112 BPM · break originario hip-hop 1973
+- `demo-impeach.json` · 100 BPM · Honey Drippers 1973
+- `demo-ashleysroachclip.json` · 100 BPM · Soul Searchers 1974
+- `demo-synthsub.json` · 91 BPM · Melvin Bliss 1973
 
 > ⚠️ I "break storici" ricostruiscono solo lo *scheletro ritmico* (kick/snare/percussion placement), che è grammatica musicale generale. Non riproducono melodie, voci, basso, arrangement o timbri specifici delle registrazioni originali, che restano protetti.
 
-Tutti usano le stesse 8 voci sintetizzate — cambia solo il *programming*. Ottima dimostrazione di quanto conti il pattern più del timbro.
-
-Vedi il [README degli esempi](examples/README.md) per istruzioni d'uso e tutti i dettagli.
+Tutti usano le stesse 8 voci sintetizzate — cambia solo il *programming*. Vedi il [README degli esempi](examples/README.md) per dettagli e tip d'uso per ogni demo.
 
 ---
 
