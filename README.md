@@ -171,12 +171,18 @@ Export JSON versione 2:
 
 ## 🎁 Esempi (import pronti)
 
-Nella cartella [`examples/`](examples/) trovi set completi importabili col bottone **IMPORT**:
+Nella cartella [`examples/`](examples/) trovi **4 set completi** importabili col bottone **IMPORT**, ognuno dedicato a un genere diverso:
 
-- **[`demo-house.json`](examples/demo-house.json)** — mini-traccia house/techno a 124 BPM, 4 pattern (Intro · Verse · Build · Drop) concatenati in song mode. Pattern 4/4 con pan stereo, velocity alternate, ratchet nei fill.
-- **[`demo-trap.json`](examples/demo-trap.json)** — trap beat moderno a 140 BPM (half-time feel). Kick 808 pitchato -5, hi-hat con triplette (ratchet 2×/3×/4×), snare roll 4× nel drop. Mostra perché i ratchet sono l'essenza del trap.
+| File | Genere | BPM | Firma sonora |
+|---|---|---|---|
+| [`demo-house.json`](examples/demo-house.json)     | House / Techno    | 124 | Kick 4/4 · pan stereo largo · build+drop |
+| [`demo-trap.json`](examples/demo-trap.json)       | Trap / Hip-Hop    | 140 | Kick 808 pitch -5 · hi-hat ratchet ovunque |
+| [`demo-boombap.json`](examples/demo-boombap.json) | Boom Bap '90s     |  90 | **Swing 52%** + humanize · ghost snare · rim shot |
+| [`demo-dnb.json`](examples/demo-dnb.json)         | DNB / Amen Break  | 170 | **Ghost snare al 7** · kick sparso · snare roll 4× |
 
-Vedi il [README degli esempi](examples/README.md) per istruzioni d'uso e dettagli sui pattern.
+Tutti usano le stesse 8 voci sintetizzate — cambia solo il *programming*. Ottima dimostrazione di quanto conti il pattern più del timbro.
+
+Vedi il [README degli esempi](examples/README.md) per istruzioni d'uso e tutti i dettagli.
 
 ---
 
