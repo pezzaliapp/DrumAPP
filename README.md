@@ -107,6 +107,7 @@ DrumAPP/
 ├── manifest.json       # PWA manifest
 ├── service-worker.js   # offline cache (drumapp-v6)
 ├── icons/              # 192/512/maskable PNG
+├── examples/           # set JSON importabili (demo-house.json)
 ├── python/
 │   └── drum_machine.py # versione desktop legacy (pygame+numpy)
 └── generate_icons.py   # script generazione icone da SVG
@@ -165,6 +166,16 @@ Export JSON versione 2:
 ```
 
 **Backward compatibility**: i file v1/v2 senza `pan` o `songSequence` vengono caricati con valori di default (pan=0, sequence=["A","A","B","A"]).
+
+---
+
+## 🎁 Esempi (import pronti)
+
+Nella cartella [`examples/`](examples/) trovi set completi importabili col bottone **IMPORT**:
+
+- **[`demo-house.json`](examples/demo-house.json)** — mini-traccia house/techno a 124 BPM, 4 pattern (Intro · Verse · Build · Drop) concatenati in song mode. Usa velocity alternate, probability, ratchet (snare roll + hi-hat fill), nudge, pan stereo. **~20 secondi**, perfetta per capire cosa può fare DrumAPP Pro senza partire da zero.
+
+Vedi il [README degli esempi](examples/README.md) per istruzioni d'uso e dettagli sui pattern.
 
 ---
 
