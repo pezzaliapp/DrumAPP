@@ -12,6 +12,7 @@ Set di esempio importabili nell'app via il bottone **IMPORT**. Ognuno è pensato
 | [`demo-trap.json`](demo-trap.json)       | Trap / Hip-Hop      | 140 | ~17s | 808 profondo + ratchet hats |
 | [`demo-boombap.json`](demo-boombap.json) | Boom Bap '90s       |  90 | ~21s | Swing alto, feel "lazy" Dilla |
 | [`demo-dnb.json`](demo-dnb.json)         | DNB / Amen Break    | 170 | ~14s | Breakbeat jungle, ghost snare |
+| [`demo-makesomenoise.json`](demo-makesomenoise.json) | NYC Hip-Hop (style of) | 105 | ~18s | Kick doppio + rim shaker + cowbell |
 
 Tutte usano gli stessi 8 suoni sintetizzati di DrumAPP — cambia solo come vengono **programmati** (pattern, velocity, ratchet, pan, pitch). È la dimostrazione migliore di quanto il *programming* conti più del *sample* in una drum machine.
 
@@ -78,6 +79,28 @@ Pattern A/B alternano le due bar dell'Amen originale (il kick si sposta tra le d
 Trucco per capire l'Amen: dopo l'import, seleziona la traccia SNARE (click sul nome), poi premi `S` (solo) → senti isolato il pattern Amen classico col ghost che "fa tutto".
 
 Sequence `A B A B A B C A B D`.
+
+## 📀 `demo-makesomenoise.json` · NYC Hip-Hop 105 BPM
+
+Pattern **nello stile** di "Make Some Noise" dei Beastie Boys (2011) — NYC hip-hop punchy, feel quasi dritto (swing 12%, non boom-bap pesante).
+
+> ⚠️ **Chiarimento**: è un pattern originale *ispirato* al brano, non una cover né una riproduzione. La drum programming (kick/snare placement) è grammatica musicale generale; il brano reale con voci, sample, synth e arrangement resta dei Beastie Boys.
+
+Firma sonora:
+- **Kick doppio** su step 1+3 e 9+11 (non four-on-the-floor) — il "boom-BOOM ... ta" caratteristico
+- Snare backbeat punchy, pitch +2 per lo "snap" da drum machine vintage
+- **Rim shot sugli off-beat 16th** = shaker/tamburello del verso
+- **Cowbell HP-filtered** (cutoff 30%) per la timbrica metallica NYC
+- Double snare al step 13 nel hook = "crack-crack" del ritornello
+- Tom fill "live" nel Pattern D — stile Beastie, niente trap roll aggressivi
+- Humanize on leggero per feel umano
+
+Pattern A (intro/skeleton) → B (verse con shaker+cowbell) → C (hook punchy con clap layer) → D (break con tom fill). Sequence `A B B C B C C D`.
+
+Trucchi interessanti:
+- Porta lo **swing a 45%** → stesso pattern diventa boom-bap classico (capisci quanto lo swing cambi tutto)
+- **PITCH cowbell +4** → vibe ancora più NYC-80s
+- Togli **HUMANIZE** → diventa più "tight/compressed" come le registrazioni del 2011 reali
 
 ---
 
