@@ -171,14 +171,22 @@ Export JSON versione 2:
 
 ## 🎁 Esempi (import pronti)
 
-Nella cartella [`examples/`](examples/) trovi **4 set completi** importabili col bottone **IMPORT**, ognuno dedicato a un genere diverso:
+Nella cartella [`examples/`](examples/) trovi **9 set completi** importabili col bottone **IMPORT**:
 
-| File | Genere | BPM | Firma sonora |
-|---|---|---|---|
-| [`demo-house.json`](examples/demo-house.json)     | House / Techno    | 124 | Kick 4/4 · pan stereo largo · build+drop |
-| [`demo-trap.json`](examples/demo-trap.json)       | Trap / Hip-Hop    | 140 | Kick 808 pitch -5 · hi-hat ratchet ovunque |
-| [`demo-boombap.json`](examples/demo-boombap.json) | Boom Bap '90s     |  90 | **Swing 52%** + humanize · ghost snare · rim shot |
-| [`demo-dnb.json`](examples/demo-dnb.json)         | DNB / Amen Break  | 170 | **Ghost snare al 7** · kick sparso · snare roll 4× |
+**Generi moderni** (pattern originali che dimostrano le feature Pro):
+- [`demo-house.json`](examples/demo-house.json) · 124 BPM house/techno
+- [`demo-trap.json`](examples/demo-trap.json) · 140 BPM trap con ratchet
+- [`demo-boombap.json`](examples/demo-boombap.json) · 90 BPM swing 52% stile Dilla
+- [`demo-dnb.json`](examples/demo-dnb.json) · 170 BPM Amen-ispirato
+- [`demo-makesomenoise.json`](examples/demo-makesomenoise.json) · 105 BPM NYC hip-hop
+
+**Break storici** (ricostruzioni ritmiche di drum break iconici):
+- [`demo-billiejean.json`](examples/demo-billiejean.json) · 117 BPM, stile Linn LM-1 1982
+- [`demo-funkydrummer.json`](examples/demo-funkydrummer.json) · 103 BPM, stile Clyde Stubblefield 1970
+- [`demo-levee.json`](examples/demo-levee.json) · 72 BPM, stile Bonham 1971
+- [`demo-apache.json`](examples/demo-apache.json) · 112 BPM, break originario hip-hop 1973
+
+> ⚠️ I "break storici" ricostruiscono solo lo *scheletro ritmico* (kick/snare/percussion placement), che è grammatica musicale generale. Non riproducono melodie, voci, basso, arrangement o timbri specifici delle registrazioni originali, che restano protetti.
 
 Tutti usano le stesse 8 voci sintetizzate — cambia solo il *programming*. Ottima dimostrazione di quanto conti il pattern più del timbro.
 

@@ -6,15 +6,26 @@ Set di esempio importabili nell'app via il bottone **IMPORT**. Ognuno è pensato
 
 ## 📀 Demo disponibili
 
-| File | Genere | BPM | Durata | Feel |
-|---|---|---|---|---|
-| [`demo-house.json`](demo-house.json)     | House / Techno      | 124 | ~20s | 4/4 dritto, build + drop |
-| [`demo-trap.json`](demo-trap.json)       | Trap / Hip-Hop      | 140 | ~17s | 808 profondo + ratchet hats |
-| [`demo-boombap.json`](demo-boombap.json) | Boom Bap '90s       |  90 | ~21s | Swing alto, feel "lazy" Dilla |
-| [`demo-dnb.json`](demo-dnb.json)         | DNB / Amen Break    | 170 | ~14s | Breakbeat jungle, ghost snare |
-| [`demo-makesomenoise.json`](demo-makesomenoise.json) | NYC Hip-Hop (style of) | 105 | ~18s | Kick doppio + rim shaker + cowbell |
+### Generi moderni
+| File | Genere | BPM | Feel |
+|---|---|---|---|
+| [`demo-house.json`](demo-house.json)     | House / Techno      | 124 | 4/4 dritto, build + drop |
+| [`demo-trap.json`](demo-trap.json)       | Trap / Hip-Hop      | 140 | 808 profondo + ratchet hats |
+| [`demo-boombap.json`](demo-boombap.json) | Boom Bap '90s       |  90 | Swing alto, feel "lazy" Dilla |
+| [`demo-dnb.json`](demo-dnb.json)         | DNB / Amen Break    | 170 | Breakbeat jungle, ghost snare |
+| [`demo-makesomenoise.json`](demo-makesomenoise.json) | NYC Hip-Hop 2011 style | 105 | Kick doppio + rim shaker + cowbell |
 
-Tutte usano gli stessi 8 suoni sintetizzati di DrumAPP — cambia solo come vengono **programmati** (pattern, velocity, ratchet, pan, pitch). È la dimostrazione migliore di quanto il *programming* conti più del *sample* in una drum machine.
+### Break storici (ricostruzioni ritmiche)
+| File | Ispirato a | Anno | BPM | Perché è iconico |
+|---|---|---|---|---|
+| [`demo-billiejean.json`](demo-billiejean.json)     | Billie Jean (MJ)            | 1982 | 117 | Linn LM-1 metronomica, kick sincopato |
+| [`demo-funkydrummer.json`](demo-funkydrummer.json) | Funky Drummer (J. Brown)    | 1970 | 103 | Break più campionato della storia — ghost notes + open hat |
+| [`demo-levee.json`](demo-levee.json)               | When the Levee Breaks (LZ)  | 1971 |  72 | Bonham massiccio, half-time, decay lunghi |
+| [`demo-apache.json`](demo-apache.json)             | Apache (Incredible Bongo B.)| 1973 | 112 | Il break che Kool Herc mixava al Bronx = genesi dell'hip-hop |
+
+> ⚠️ **Disclaimer per i break storici**: questi file ricostruiscono lo *scheletro ritmico* (kick/snare/percussion placement) dei brani indicati. **Non** riproducono le melodie, voci, basso, arrangement, sample o timbri specifici, che restano protetti dal copyright dei rispettivi autori/editori. La drum programming è grammatica musicale generale.
+
+Tutte usano gli stessi 8 suoni sintetizzati di DrumAPP — cambia solo come vengono **programmati** (pattern, velocity, ratchet, pan, pitch). Sono la dimostrazione migliore di quanto il *programming* conti più del *sample* in una drum machine.
 
 ---
 
@@ -101,6 +112,53 @@ Trucchi interessanti:
 - Porta lo **swing a 45%** → stesso pattern diventa boom-bap classico (capisci quanto lo swing cambi tutto)
 - **PITCH cowbell +4** → vibe ancora più NYC-80s
 - Togli **HUMANIZE** → diventa più "tight/compressed" come le registrazioni del 2011 reali
+
+---
+
+## 🏛 Break storici
+
+I 4 file seguenti ricostruiscono lo *scheletro ritmico* di break leggendari. Sono un piccolo museo interattivo: puoi ascoltare in 60 secondi la differenza fondamentale fra una drum machine del 1982 (metronomica), un batterista funk del 1970 (pieno di ghost), un hard rock del 1971 (massiccio e half-time) e una band di session tropicale del 1973 (bongos e claves).
+
+### 📀 `demo-billiejean.json` · 117 BPM, stile Linn LM-1
+
+Ispirato a *Billie Jean* (Michael Jackson, 1982). La drum machine era una Linn LM-1, strumento che ha cambiato la produzione pop: precisione **assolutamente metronomica**, niente humanize, niente ghost. Il groove nasce da ciò che è **presente** (kick sincopato su 1 e 7, snare pulito, hi-hat 16th con accento) e da ciò che è **assente** (nessuna sottigliezza ritmica).
+
+**Trucco**: prova ad attivare HUMANIZE → senti come il feel si rovina subito. È una delle rare demo dove il robot è l'obiettivo.
+
+### 📀 `demo-funkydrummer.json` · 103 BPM, stile Clyde Stubblefield
+
+Ispirato a *Funky Drummer* (James Brown, 1970), eseguito da Clyde Stubblefield. Il break più campionato della storia dell'hip-hop (Public Enemy, N.W.A, LL Cool J, Prince e migliaia di altri). L'anima del pattern sta in due cose:
+
+1. **Ghost snare** fittissimi (step 7, 8, 11, 14) con velocity 0.3-0.35 e probability 80-90% — creano il "conversational" feel del funk
+2. **Open hat al step 6** — un singolo colpo che è IL momento magico del break
+
+Test da manuale: metti la traccia OPEN HH a volume 0 durante la riproduzione. Senti il groove che si affloscia. Rimetti su → torna il funk. Tutto il mito sta lì.
+
+### 📀 `demo-levee.json` · 72 BPM, stile John Bonham
+
+Ispirato a *When the Levee Breaks* (Led Zeppelin IV, 1971). Bonham registrò il drum break nella tromba delle scale di Headley Grange, con due microfoni lontani — da qui il sound enorme. Il pattern è **semplicissimo** (kick su 1 e 7, snare sul backbeat, hi-hat 8th), ma i parametri lo fanno diventare monumentale:
+
+- Kick **pitch -3 e decay 2.0×**
+- Snare **pitch -1 e decay 1.5×**
+- Tom **pitch -4 e decay 1.8×** (il "bombo-tom" signature)
+- Humanize **off** — Bonham era tight, non lazy
+
+Campionato da Beastie Boys (*Rhymin' & Stealin'*), Eminem (*Kim*), Dr. Dre, Enigma e molti altri. Prova ad alzare il decay del kick a 2.5 e del snare a 2.0 per amplificare l'effetto "stairwell".
+
+### 📀 `demo-apache.json` · 112 BPM, il break originario dell'hip-hop
+
+Ispirato ad *Apache* (Incredible Bongo Band, 1973). Questo è il break che **DJ Kool Herc** isolava e loopava ai block party del Bronx nel 1973-75 — l'atto di nascita materiale dell'hip-hop. La band era una session tropicale e la drum programming riflette il mix: batteria funk + bongos + claves + cowbell.
+
+Ho mappato i timbri come fa tipicamente chi "interpreta" Apache in una drum machine moderna:
+- **TOM** con pitch +5 = bongos (pan R40)
+- **RIM** con pitch +1 = claves (pan L40, stereo largo anni '70)
+- **COWBELL** = cowbell latina (pan R25)
+- **HI-HAT** solo 8th, non protagonista
+- Kick doppio sincopato (1+3, 9+11) per il feel latino-funk
+
+Il Pattern C è il "break di Kool Herc": kick ridotto, percussioni in roll. È il momento in cui i DJ abbassavano la batteria principale e facevano rappare sopra le congas. Per sentirlo: durante il Pattern C, muta il kick (premi `M` con la traccia KICK attiva) → hai ricostruito l'esperienza di un block party 1975.
+
+---
 
 ---
 
