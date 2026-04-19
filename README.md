@@ -13,6 +13,10 @@
 - **Zero samples**: tutti i suoni generati via `OscillatorNode`, `BufferSource` di rumore, filtri e `GainNode` per gli inviluppi
 - **Scheduler lookahead** con precisione campione-accurata (pattern di Chris Wilson)
 - **Slider BPM** 60–200 regolabile durante il playback
+- **3 modalità di salvataggio**:
+  - **4 slot locali** (A/B/C/D) — tap = carica, tieni premuto = salva
+  - **Export/Import `.json`** — per archiviazione e backup
+  - **Share link** — pattern codificato nell'URL, condivisibile su WhatsApp/Telegram/email
 - **Installabile** come app standalone (service worker + manifest)
 - **Funziona offline** dopo il primo caricamento
 - **Responsive**: si adatta a desktop, tablet e smartphone (scroll orizzontale del sequencer sui telefoni piccoli)
@@ -77,6 +81,46 @@ Oppure con Node:
 ```bash
 npx serve .
 ```
+
+---
+
+## Salvare e condividere i pattern
+
+### Slot locali (A / B / C / D)
+Quattro slot memorizzati nel browser (`localStorage`).
+
+- **Tap breve** su uno slot vuoto → salva il pattern corrente lì dentro
+- **Tap breve** su uno slot pieno → carica quel pattern
+- **Tieni premuto** (mezzo secondo) su qualsiasi slot → salva il pattern corrente (sovrascrive se già pieno)
+
+Gli slot pieni sono scuri con un puntino arancione in alto a destra. I pattern restano sul dispositivo corrente.
+
+### Export / Import `.json`
+- **EXPORT** scarica un file `drumapp-<timestamp>.json` contenente pattern e BPM.
+- **IMPORT** apre un file picker e carica un `.json` precedentemente esportato.
+
+Formato del file:
+```json
+{
+  "version": 1,
+  "bpm": 120,
+  "pattern": {
+    "kick":  [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
+    "snare": [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+    "hihat": [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+    "clap":  [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0]
+  }
+}
+```
+
+### Share link
+**SHARE** copia negli appunti un URL tipo:
+
+```
+https://pezzaliapp.github.io/DrumAPP/#8888-0808-aaaa-0800-78
+```
+
+Chi apre quel link vede partire la PWA con il pattern e il BPM già caricati. L'hash codifica ogni traccia in 4 caratteri esadecimali (16 bit = 16 step, 1 = attivo), seguiti dal BPM in hex.
 
 ---
 
@@ -152,15 +196,15 @@ Font utilizzati via Google Fonts:
 
 ---
 
-## Possibili estensioni
+## Possibili estensioni future
 
-- Salvataggio/caricamento pattern su `localStorage`
-- Swap pattern A/B/C/D
+- Swap pattern A/B/C/D in playback (song mode)
 - Volume per traccia
 - Tracce aggiuntive (Tom, Cowbell, Open Hi-Hat)
 - Export del loop in `.wav` via `OfflineAudioContext`
 - MIDI in/out tramite Web MIDI API
-- Condivisione pattern via URL (pattern codificato in `#hash`)
+- Step "accent" (step con volume maggiore)
+- Swing / shuffle regolabile
 
 ---
 

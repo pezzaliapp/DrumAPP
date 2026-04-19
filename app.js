@@ -393,11 +393,288 @@
   }
 
   // ============================================================
-  // 8) BOOTSTRAP
+  // 8) SALVATAGGIO / CARICAMENTO
+  //    - Slot A/B/C/D in localStorage
+  //    - Export/Import file .json
+  //    - URL condivisibile (pattern codificato nell'hash)
+  // ============================================================
+  const STORAGE_PREFIX = 'drumapp.slot.';
+  const SLOTS = ['A', 'B', 'C', 'D'];
+
+  /** Serializza pattern + BPM in un oggetto JSON */
+  function serializePattern() {
+    const out = { version: 1, bpm: bpm, pattern: {} };
+    TRACKS.forEach((track, i) => {
+      out.pattern[track.id] = pattern[i].map(b => b ? 1 : 0);
+    });
+    return out;
+  }
+
+  /** Applica un oggetto serializzato al sequencer (se valido) */
+  function applyPattern(data) {
+    if (!data || !data.pattern) return false;
+    if (typeof data.bpm === 'number' && data.bpm >= 60 && data.bpm <= 200) {
+      bpm = Math.round(data.bpm);
+      document.getElementById('bpmValue').textContent = bpm;
+      document.getElementById('bpmSlider').value = bpm;
+    }
+    for (let i = 0; i < TRACKS.length; i++) {
+      const steps = data.pattern[TRACKS[i].id];
+      if (Array.isArray(steps) && steps.length === NUM_STEPS) {
+        pattern[i] = steps.map(v => !!v);
+      }
+    }
+    refreshPatternUI();
+    return true;
+  }
+
+  /** Codifica pattern -> stringa hex compatta per URL
+   *  Formato: 4 hex per traccia (16 bit, step 1 = MSB) + "-" + BPM in hex
+   *  Esempio: "8888-0808-aaaa-0800-78"
+   */
+  function packToHex() {
+    const parts = pattern.map(track => {
+      let bits = 0;
+      for (let i = 0; i < NUM_STEPS; i++) {
+        if (track[i]) bits |= (1 << (NUM_STEPS - 1 - i));
+      }
+      return bits.toString(16).padStart(4, '0');
+    });
+    return parts.join('-') + '-' + bpm.toString(16);
+  }
+
+  /** Decodifica stringa hex -> pattern + BPM */
+  function unpackFromHex(hex) {
+    const m = hex.match(/^([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]+)$/i);
+    if (!m) return false;
+    const newBpm = parseInt(m[5], 16);
+    if (isNaN(newBpm) || newBpm < 60 || newBpm > 200) return false;
+
+    const newPattern = [];
+    for (let t = 0; t < TRACKS.length; t++) {
+      const bits = parseInt(m[t + 1], 16);
+      const row = [];
+      for (let i = 0; i < NUM_STEPS; i++) {
+        row.push(!!(bits & (1 << (NUM_STEPS - 1 - i))));
+      }
+      newPattern.push(row);
+    }
+    bpm = newBpm;
+    document.getElementById('bpmValue').textContent = bpm;
+    document.getElementById('bpmSlider').value = bpm;
+    pattern = newPattern;
+    refreshPatternUI();
+    return true;
+  }
+
+  /** --- Slot (localStorage) --- */
+  function hasSlot(slot) {
+    try { return !!localStorage.getItem(STORAGE_PREFIX + slot); }
+    catch (e) { return false; }
+  }
+
+  function saveToSlot(slot) {
+    const data = serializePattern();
+    try {
+      localStorage.setItem(STORAGE_PREFIX + slot, JSON.stringify(data));
+      updateSlotButtons();
+      flashSlot(slot, 'saving');
+      showToast(`Salvato nello slot ${slot}`);
+    } catch (e) {
+      showToast('Impossibile salvare', true);
+    }
+  }
+
+  function loadFromSlot(slot) {
+    const raw = (() => {
+      try { return localStorage.getItem(STORAGE_PREFIX + slot); }
+      catch (e) { return null; }
+    })();
+    if (!raw) {
+      showToast(`Slot ${slot} vuoto — tieni premuto per salvare`);
+      return;
+    }
+    try {
+      const data = JSON.parse(raw);
+      if (applyPattern(data)) {
+        flashSlot(slot, 'loading');
+        showToast(`Caricato dallo slot ${slot}`);
+      } else {
+        showToast('Slot non valido', true);
+      }
+    } catch (e) {
+      showToast('Errore nel caricare lo slot', true);
+    }
+  }
+
+  function updateSlotButtons() {
+    SLOTS.forEach(slot => {
+      const btn = document.querySelector(`[data-slot="${slot}"]`);
+      if (btn) btn.classList.toggle('slot--filled', hasSlot(slot));
+    });
+  }
+
+  function flashSlot(slot, type) {
+    const btn = document.querySelector(`[data-slot="${slot}"]`);
+    if (!btn) return;
+    const cls = 'slot--' + type;
+    btn.classList.remove(cls);
+    // reflow per resettare l'animazione
+    void btn.offsetWidth;
+    btn.classList.add(cls);
+    setTimeout(() => btn.classList.remove(cls), 600);
+  }
+
+  /** Attacca il gesture "tap = carica / hold 500ms = salva" a uno slot button */
+  function attachSlotGestures(btn, slot) {
+    const HOLD_MS = 500;
+    let holdTimer = null;
+    let holdFired = false;
+
+    const onDown = (e) => {
+      e.preventDefault();
+      holdFired = false;
+      btn.classList.add('slot--holding');
+      holdTimer = setTimeout(() => {
+        holdFired = true;
+        btn.classList.remove('slot--holding');
+        saveToSlot(slot);
+      }, HOLD_MS);
+    };
+
+    const onUp = () => {
+      btn.classList.remove('slot--holding');
+      if (holdTimer) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+      }
+      if (!holdFired) {
+        // Tap breve
+        if (hasSlot(slot)) {
+          loadFromSlot(slot);
+        } else {
+          // Slot vuoto: il tap breve salva subito (comportamento intuitivo)
+          saveToSlot(slot);
+        }
+      }
+    };
+
+    const onCancel = () => {
+      btn.classList.remove('slot--holding');
+      if (holdTimer) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+      }
+    };
+
+    btn.addEventListener('pointerdown', onDown);
+    btn.addEventListener('pointerup', onUp);
+    btn.addEventListener('pointerleave', onCancel);
+    btn.addEventListener('pointercancel', onCancel);
+  }
+
+  /** --- Export/Import JSON --- */
+  function exportJSON() {
+    const data = serializePattern();
+    data.exportedAt = new Date().toISOString();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    a.download = `drumapp-${ts}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast('Pattern esportato');
+  }
+
+  function importJSONFromFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (applyPattern(data)) {
+          showToast(`Importato: ${file.name}`);
+        } else {
+          showToast('File non valido', true);
+        }
+      } catch (err) {
+        showToast('JSON non leggibile', true);
+      }
+    };
+    reader.onerror = () => showToast('Errore di lettura', true);
+    reader.readAsText(file);
+  }
+
+  /** --- Share link (URL con hash) --- */
+  function shareLink() {
+    const hex = packToHex();
+    const url = `${location.origin}${location.pathname}#${hex}`;
+    // Aggiorna anche la barra indirizzi corrente
+    history.replaceState(null, '', '#' + hex);
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url)
+        .then(() => showToast('Link copiato negli appunti'))
+        .catch(() => fallbackCopy(url));
+    } else {
+      fallbackCopy(url);
+    }
+  }
+
+  function fallbackCopy(text) {
+    // Fallback per browser senza Clipboard API (raro su HTTPS)
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'absolute';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showToast('Link copiato');
+    } catch (e) {
+      showToast('Copia manuale: ' + text);
+    }
+    document.body.removeChild(ta);
+  }
+
+  /** Tenta di caricare un pattern dall'URL hash, se presente */
+  function loadFromURLHash() {
+    const hash = location.hash.replace(/^#/, '');
+    if (!hash) return false;
+    const ok = unpackFromHex(hash);
+    if (ok) showToast('Pattern caricato dal link');
+    return ok;
+  }
+
+  /** --- Toast --- */
+  let toastTimer = null;
+  function showToast(msg, isError = false) {
+    const el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.toggle('toast--error', !!isError);
+    el.classList.add('toast--show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('toast--show'), 2200);
+  }
+
+  // ============================================================
+  // 9) BOOTSTRAP
   // ============================================================
   document.addEventListener('DOMContentLoaded', () => {
     buildSequencer();
-    loadDemo();
+
+    // Se c'e' un pattern nell'URL (condivisione via link), lo carichiamo.
+    // Altrimenti partiamo col pattern demo.
+    if (!loadFromURLHash()) {
+      loadDemo();
+    }
 
     // Play / Stop
     document.getElementById('playButton').addEventListener('click', toggleTransport);
@@ -410,11 +687,30 @@
       readout.textContent = bpm;
     });
 
-    // Pulsanti chip
-    document.getElementById('demoBtn').addEventListener('click', () => {
-      loadDemo();
-    });
+    // Pulsanti demo / clear
+    document.getElementById('demoBtn').addEventListener('click', loadDemo);
     document.getElementById('clearBtn').addEventListener('click', clearPattern);
+
+    // Storage: slot A/B/C/D (tap = load, hold 500ms = save)
+    SLOTS.forEach(slot => {
+      const btn = document.querySelector(`[data-slot="${slot}"]`);
+      if (btn) attachSlotGestures(btn, slot);
+    });
+    updateSlotButtons();
+
+    // Storage: export / import file JSON
+    document.getElementById('exportBtn').addEventListener('click', exportJSON);
+    const importBtn = document.getElementById('importBtn');
+    const importFile = document.getElementById('importFile');
+    importBtn.addEventListener('click', () => importFile.click());
+    importFile.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) importJSONFromFile(file);
+      importFile.value = ''; // permette di re-importare lo stesso file
+    });
+
+    // Storage: share link
+    document.getElementById('shareBtn').addEventListener('click', shareLink);
 
     // Scorciatoie da tastiera
     document.addEventListener('keydown', e => {

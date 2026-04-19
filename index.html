@@ -62,6 +62,31 @@
       <div class="sequencer" id="sequencer" role="grid" aria-label="Step sequencer"></div>
     </section>
 
+    <!-- Storage bar: slot, file, link -->
+    <section class="storage" aria-label="Salvataggio pattern">
+      <div class="storage__group">
+        <span class="storage__label">SLOT</span>
+        <div class="slots">
+          <button class="slot" data-slot="A" type="button" aria-label="Slot A">A</button>
+          <button class="slot" data-slot="B" type="button" aria-label="Slot B">B</button>
+          <button class="slot" data-slot="C" type="button" aria-label="Slot C">C</button>
+          <button class="slot" data-slot="D" type="button" aria-label="Slot D">D</button>
+        </div>
+      </div>
+
+      <div class="storage__group">
+        <span class="storage__label">FILE</span>
+        <button class="chip chip--ghost" id="exportBtn" type="button">EXPORT</button>
+        <button class="chip chip--ghost" id="importBtn" type="button">IMPORT</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
+
+      <div class="storage__group">
+        <span class="storage__label">LINK</span>
+        <button class="chip" id="shareBtn" type="button">SHARE</button>
+      </div>
+    </section>
+
     <!-- Footer: controlli secondari + meta -->
     <footer class="foot">
       <div class="foot__controls">
@@ -69,13 +94,16 @@
         <button class="chip chip--ghost" id="clearBtn" type="button">CLEAR</button>
       </div>
       <div class="foot__shortcuts">
-        <kbd>SPACE</kbd> play  ·  <kbd>C</kbd> clear  ·  <kbd>D</kbd> demo
+        <kbd>SPACE</kbd> play · <kbd>C</kbd> clear · <kbd>D</kbd> demo · <kbd>tap</kbd> slot = carica · <kbd>hold</kbd> = salva
       </div>
       <div class="foot__meta">
         <span>PWA · Web Audio · No samples</span>
         <span class="foot__sig">© pezzaliapp</span>
       </div>
     </footer>
+
+    <!-- Toast per notifiche brevi -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   </main>
 
