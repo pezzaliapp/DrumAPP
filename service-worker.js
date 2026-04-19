@@ -4,7 +4,7 @@
    con caching "on-the-fly" dei font di Google quando richiesti.
    ============================================================== */
 
-const CACHE_NAME = 'drumapp-v2';
+const CACHE_NAME = 'drumapp-v3';
 
 // Asset locali della PWA
 const CORE_ASSETS = [

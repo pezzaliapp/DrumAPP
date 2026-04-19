@@ -3,25 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>DrumAPP — 16 Step Drum Machine</title>
-  <meta name="description" content="Drum Machine a 16 step con sintesi audio nativa del browser. Installabile come PWA. Kick, Snare, Hi-Hat, Clap sintetizzati via Web Audio API.">
+  <title>DrumAPP — Pro Drum Machine</title>
+  <meta name="description" content="Drum Machine pro a 8 voci, 16 step con swing, velocity, probability, filter, pattern multipli e export WAV. Web Audio, PWA, offline.">
 
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1a1a22">
   <meta name="color-scheme" content="light">
 
-  <!-- iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="DrumAPP">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
 
-  <!-- Icons -->
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Sans:wght@400;500;600;700&family=VT323&display=swap" rel="stylesheet">
@@ -31,11 +27,11 @@
 <body>
   <main class="stage">
 
-    <!-- Pannello superiore: brand, play, tempo -->
+    <!-- ================= TOP: brand · transport · tempo · swing ================= -->
     <header class="top">
       <div class="brand">
         <h1 class="brand__name">DRUM<span class="brand__slash">/</span>APP</h1>
-        <p class="brand__tag">16-STEP MACHINE · EDITION N°01</p>
+        <p class="brand__tag">PRO · 8 VOICES · EDITION N°02</p>
       </div>
 
       <button class="transport" id="playButton" type="button" aria-label="Play/Stop">
@@ -46,24 +42,100 @@
       <div class="tempo">
         <div class="tempo__head">
           <span class="tempo__label">TEMPO</span>
-          <span class="tempo__unit">BPM</span>
+          <button class="tap-btn" id="tapBtn" type="button" title="Tap tempo (T)">TAP</button>
         </div>
         <div class="tempo__readout" id="bpmValue">120</div>
         <input type="range" id="bpmSlider" min="60" max="200" value="120" class="tempo__slider" aria-label="BPM">
-        <div class="tempo__range">
-          <span>60</span>
-          <span>200</span>
+
+        <div class="tempo__head tempo__head--swing">
+          <span class="tempo__label">SWING</span>
+          <span class="tempo__unit" id="swingValue">0%</span>
         </div>
+        <input type="range" id="swingSlider" min="0" max="75" value="0" class="tempo__slider" aria-label="Swing">
       </div>
     </header>
 
-    <!-- Sequencer -->
+    <!-- ================= ACTIVE TRACK PANEL ================= -->
+    <section class="atrack" aria-label="Parametri traccia attiva">
+      <div class="atrack__head">
+        <span class="atrack__dot" id="atDot"></span>
+        <span class="atrack__label">EDITING</span>
+        <span class="atrack__name" id="atName">KICK</span>
+        <span class="atrack__hint">(click sul nome della traccia per cambiare)</span>
+      </div>
+      <div class="atrack__knobs">
+        <label class="knob">
+          <span class="knob__label">VOL <span class="knob__val" id="atVolV">85</span></span>
+          <input type="range" id="atVol" min="0" max="100" value="85">
+        </label>
+        <label class="knob">
+          <span class="knob__label">PITCH <span class="knob__val" id="atPitchV">+0</span></span>
+          <input type="range" id="atPitch" min="-12" max="12" value="0">
+        </label>
+        <label class="knob">
+          <span class="knob__label">DECAY <span class="knob__val" id="atDecayV">1.00</span></span>
+          <input type="range" id="atDecay" min="40" max="250" value="100">
+        </label>
+        <label class="knob">
+          <span class="knob__label">FILTER</span>
+          <select id="atFilter">
+            <option value="off">OFF</option>
+            <option value="lowpass">LOW-PASS</option>
+            <option value="highpass">HIGH-PASS</option>
+          </select>
+        </label>
+        <label class="knob">
+          <span class="knob__label">CUTOFF <span class="knob__val" id="atCutoffV">70</span></span>
+          <input type="range" id="atCutoff" min="0" max="100" value="70">
+        </label>
+      </div>
+    </section>
+
+    <!-- ================= SEQUENCER ================= -->
     <section class="sequencer-wrap">
       <div class="sequencer" id="sequencer" role="grid" aria-label="Step sequencer"></div>
     </section>
 
-    <!-- Storage bar: slot, file, link -->
-    <section class="storage" aria-label="Salvataggio pattern">
+    <!-- ================= MODE + PATTERN + LENGTH ================= -->
+    <section class="modebar" aria-label="Modalità edit e pattern">
+      <div class="modebar__group">
+        <span class="storage__label">EDIT</span>
+        <button class="mode-btn mode-btn--on" data-edit-mode="trig"  type="button">TRIG</button>
+        <button class="mode-btn"              data-edit-mode="vel"   type="button">VEL</button>
+        <button class="mode-btn"              data-edit-mode="prob"  type="button">PROB</button>
+        <button class="mode-btn"              data-edit-mode="ratch" type="button">RATCH</button>
+        <button class="mode-btn"              data-edit-mode="nudge" type="button">NUDGE</button>
+      </div>
+
+      <div class="modebar__group">
+        <span class="storage__label">PATTERN</span>
+        <button class="pat-btn" data-pattern="A" type="button">A</button>
+        <button class="pat-btn" data-pattern="B" type="button">B</button>
+        <button class="pat-btn" data-pattern="C" type="button">C</button>
+        <button class="pat-btn" data-pattern="D" type="button">D</button>
+        <label class="toggle">
+          <input type="checkbox" id="songChk"> <span>SONG</span>
+        </label>
+      </div>
+
+      <div class="modebar__group">
+        <span class="storage__label">LEN</span>
+        <select id="lengthSelect">
+          <option value="8">8</option>
+          <option value="12">12</option>
+          <option value="16" selected>16</option>
+          <option value="24">24</option>
+          <option value="32">32</option>
+        </select>
+        <label class="toggle"><input type="checkbox" id="humanizeChk"> <span>HUMANIZE</span></label>
+        <label class="toggle"><input type="checkbox" id="metroChk"> <span>METRO</span></label>
+      </div>
+    </section>
+
+    <div class="step-readout" id="stepReadout">—</div>
+
+    <!-- ================= STORAGE ================= -->
+    <section class="storage" aria-label="Salvataggio e condivisione">
       <div class="storage__group">
         <span class="storage__label">SLOT</span>
         <div class="slots">
@@ -82,19 +154,27 @@
       </div>
 
       <div class="storage__group">
-        <span class="storage__label">LINK</span>
+        <span class="storage__label">OUT</span>
         <button class="chip" id="shareBtn" type="button">SHARE</button>
+        <button class="chip" id="wavBtn" type="button">WAV</button>
+        <button class="chip chip--ghost" id="midiBtn" type="button">MIDI</button>
+      </div>
+
+      <div class="storage__group">
+        <span class="storage__label">HIST</span>
+        <button class="chip chip--ghost" id="undoBtn" type="button" title="Undo (Cmd/Ctrl+Z)">UNDO</button>
+        <button class="chip chip--ghost" id="redoBtn" type="button" title="Redo (Cmd/Ctrl+Shift+Z)">REDO</button>
       </div>
     </section>
 
-    <!-- Footer: controlli secondari + meta -->
+    <!-- ================= FOOTER ================= -->
     <footer class="foot">
       <div class="foot__controls">
         <button class="chip" id="demoBtn" type="button">DEMO</button>
         <button class="chip chip--ghost" id="clearBtn" type="button">CLEAR</button>
       </div>
       <div class="foot__shortcuts">
-        <kbd>SPACE</kbd> play · <kbd>C</kbd> clear · <kbd>D</kbd> demo · <kbd>tap</kbd> slot = carica · <kbd>hold</kbd> = salva
+        <kbd>SPACE</kbd> play · <kbd>T</kbd> tap · <kbd>1-4</kbd> pattern · <kbd>C</kbd> clear · <kbd>⌘Z</kbd> undo
       </div>
       <div class="foot__meta">
         <span>PWA · Web Audio · No samples</span>
@@ -102,14 +182,11 @@
       </div>
     </footer>
 
-    <!-- Toast per notifiche brevi -->
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
   </main>
 
   <script src="app.js" defer></script>
   <script>
-    // Registrazione service worker per funzionamento offline
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('service-worker.js').catch(err => {
