@@ -209,6 +209,73 @@ L'era dell'**hardcore UK** (The Prodigy primi EP, SL2, Shut Up & Dance, Acen, Ru
 
 ---
 
+## 🎧 DJ Workflow — da DrumAPP a DJApp
+
+Due modi per trasformare i JSON in MP3 che puoi mixare in DJApp (o qualsiasi altra DJ app):
+
+### Modalità browser (manuale, per pochi file)
+1. Apri DrumAPP, IMPORT del JSON
+2. Attiva SONG, clicca **BOUNCE** → scegli "intera song"
+3. Il browser scarica un `.wav`
+4. Se serve, converti in MP3:
+   ```bash
+   ffmpeg -i file.wav -codec:a libmp3lame -qscale:a 2 file.mp3
+   ```
+
+### Modalità batch (automatica, per tutte le demo in un colpo)
+
+Script Python `render_json_to_wav.py` incluso in questa cartella. Replica la sintesi Web Audio in numpy, produce WAV identico al BOUNCE del browser. Utile per rigenerare quando modifichi un JSON o per farli tutti in sequenza.
+
+**Requisiti**: `pip install numpy scipy` (+ ffmpeg se vuoi MP3)
+
+```bash
+# Singolo file, usa la song sequence
+python3 render_json_to_wav.py demo-house.json house.wav
+
+# Loop lunghi di un pattern specifico (per DJ mix)
+python3 render_json_to_wav.py demo-house.json house-loop.wav --loops 20 --pattern B
+
+# Tutte insieme con conversione in MP3
+for demo in house boombap trap onedrop; do
+  python3 render_json_to_wav.py demo-${demo}.json ${demo}.wav --loops 20 --pattern B
+  ffmpeg -y -i ${demo}.wav -codec:a libmp3lame -qscale:a 2 ${demo}.mp3
+done
+```
+
+### Beat-matching tra BPM diversi
+
+I JSON hanno BPM molto vari. Per un DJ set coerente conviene avere file allo stesso BPM. Con `ffmpeg atempo`:
+
+```bash
+# Es: portare trap (140 BPM) a 124 BPM (per matching con house)
+# Fattore: 124/140 = 0.8857
+ffmpeg -i trap.wav -filter:a "atempo=0.8857" trap-at124.wav
+```
+
+`atempo` modifica il tempo **senza cambiare il pitch** — i suoni restano identici, cambia solo la velocità. Range valido: 0.5 ≤ x ≤ 2.0.
+
+### Esempio di mini-set
+
+Proof-of-concept creato con:
+```bash
+# Rendering
+python3 render_json_to_wav.py demo-house.json house.wav --loops 20 --pattern B
+python3 render_json_to_wav.py demo-trap.json trap.wav --loops 22 --pattern B
+
+# Beat-match (trap 140 → 124)
+ffmpeg -i trap.wav -filter:a "atempo=0.8857" trap-at124.wav
+
+# Crossfade 10 secondi tra le due
+ffmpeg -i house.wav -i trap-at124.wav \
+  -filter_complex "[0:a][1:a]acrossfade=d=10:c1=tri:c2=tri" \
+  set.wav
+
+# Export MP3
+ffmpeg -i set.wav -codec:a libmp3lame -qscale:a 2 set.mp3
+```
+
+---
+
 ## 🛠 Creare le tue demo
 
 Gli script Python `_build_*.py` sono i generatori. Usali come template:
