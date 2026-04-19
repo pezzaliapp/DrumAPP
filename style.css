@@ -307,15 +307,15 @@ body::before {
 
 .atrack__knobs {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.7rem;
 }
-@media (max-width: 780px) {
+@media (max-width: 900px) {
+  .atrack__knobs { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 540px) {
   .atrack__knobs { grid-template-columns: repeat(2, 1fr); }
   .atrack__hint { display: none; }
-}
-@media (max-width: 420px) {
-  .atrack__knobs { grid-template-columns: 1fr 1fr; }
 }
 
 .knob {
@@ -830,6 +830,113 @@ body::before {
 .toast--error {
   background: var(--track-kick);
   box-shadow: 0 4px 14px rgba(200,85,61,0.4), 0 0 0 2px var(--ink);
+}
+
+/* ============================================================
+   SONG BAR (sequence editor)
+   ============================================================ */
+.songbar {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px dashed var(--paper-rule);
+  flex-wrap: wrap;
+}
+
+.songbar__slots {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 200px;
+}
+
+.song-slot {
+  width: 30px; height: 30px;
+  border: 1.5px solid var(--ink);
+  background: var(--paper-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--f-display);
+  font-size: 0.9rem;
+  color: var(--ink);
+  box-shadow: 0 2px 0 var(--ink);
+  transition: transform 0.08s, box-shadow 0.08s, background 0.15s, color 0.15s;
+  padding: 0;
+  line-height: 1;
+}
+.song-slot:hover { background: #e5ddc4; }
+.song-slot:active { transform: translateY(2px); box-shadow: 0 0 0 var(--ink); }
+.song-slot--current {
+  background: var(--accent);
+  color: var(--ink);
+  animation: song-slot-pulse 0.5s ease-out;
+  box-shadow: 0 2px 0 var(--accent-deep), 0 0 0 2px rgba(247,127,0,0.3);
+}
+@keyframes song-slot-pulse {
+  0% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.songbar__ctl {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.3rem;
+  border-left: 1px solid var(--paper-rule);
+  border-right: 1px solid var(--paper-rule);
+}
+
+.song-ctl-btn {
+  width: 26px; height: 26px;
+  border: 1.5px solid var(--ink);
+  background: var(--paper-2);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink);
+  box-shadow: 0 2px 0 var(--ink);
+  transition: transform 0.08s, box-shadow 0.08s, background 0.15s;
+  line-height: 1;
+}
+.song-ctl-btn:hover { background: #e5ddc4; }
+.song-ctl-btn:active { transform: translateY(2px); box-shadow: 0 0 0 var(--ink); }
+
+.songbar__len {
+  font-family: var(--f-mono);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.songbar__len span { color: var(--ink); font-weight: 700; }
+
+.songbar__hint {
+  font-size: 0.7rem;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+@media (max-width: 640px) {
+  .songbar__hint { display: none; }
+  .songbar { gap: 0.5rem; }
+}
+
+/* ============================================================
+   CHIP ARMED (paste button attivo quando c'è clipboard)
+   ============================================================ */
+.chip--armed {
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  position: relative;
+}
+.chip--armed::after {
+  content: '';
+  position: absolute;
+  top: 4px; right: 4px;
+  width: 5px; height: 5px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 4px var(--accent);
 }
 
 /* ============================================================

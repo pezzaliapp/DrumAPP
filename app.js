@@ -76,6 +76,7 @@
     filterType: 'off',   // off / lowpass / highpass
     filterCutoff: 0.7,   // 0-1 (mappato 20Hz-20kHz esponenziale)
     filterQ: 1.0,        // 0.5-10
+    pan: 0,              // -1 (full L) .. +1 (full R)
   }));
 
   // Globals
@@ -105,6 +106,10 @@
   // Catena audio per traccia
   let trackFilters = [];
   let trackGains = [];
+  let trackPanners = [];
+
+  // Pattern clipboard (copy/paste)
+  let patternClipboard = null;
 
   // Scheduler
   let nextStepTime = 0;
@@ -156,8 +161,12 @@
     const data = noiseBuffer.getChannelData(0);
     for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
 
-    // Catena per traccia: [voice] -> trackFilter[i] -> trackGain[i] -> masterGain
+    // Catena per traccia: voice -> trackPanner[i] -> trackFilter[i] -> trackGain[i] -> masterGain
     for (let i = 0; i < NUM_TRACKS; i++) {
+      const pan = audioCtx.createStereoPanner
+        ? audioCtx.createStereoPanner()
+        : null;
+
       const f = audioCtx.createBiquadFilter();
       f.type = 'lowpass';
       f.frequency.value = 20000;
@@ -166,7 +175,14 @@
       const g = audioCtx.createGain();
       g.gain.value = trackParams[i].volume;
 
-      f.connect(g).connect(masterGain);
+      if (pan) {
+        pan.pan.value = trackParams[i].pan || 0;
+        pan.connect(f).connect(g).connect(masterGain);
+      } else {
+        f.connect(g).connect(masterGain);
+      }
+
+      trackPanners.push(pan); // può essere null su browser vintage
       trackFilters.push(f);
       trackGains.push(g);
     }
@@ -178,7 +194,7 @@
     if (audioCtx.state === 'suspended') audioCtx.resume();
   }
 
-  /** Aggiorna ogni filter/gain in base a trackParams e mute/solo */
+  /** Aggiorna ogni filter/gain/pan in base a trackParams e mute/solo */
   function applyTrackParams() {
     if (!audioCtx) return;
     const anySolo = trackParams.some(p => p.solo);
@@ -189,6 +205,11 @@
       if (p.mute) vol = 0;
       else if (anySolo && !p.solo) vol = 0;
       trackGains[i].gain.setTargetAtTime(vol, audioCtx.currentTime, 0.01);
+
+      // Pan
+      if (trackPanners[i]) {
+        trackPanners[i].pan.setTargetAtTime(p.pan || 0, audioCtx.currentTime, 0.01);
+      }
 
       // Filter
       const f = trackFilters[i];
@@ -220,7 +241,7 @@
 
   /** Ritorna il nodo di uscita della traccia i (dove connettere le voci) */
   function trackOut(i) {
-    return trackFilters[i];
+    return trackPanners[i] || trackFilters[i];
   }
 
   function playKick(time, p) {
@@ -546,6 +567,7 @@
           currentPattern = nextName;
           refreshPatternUI();
           updatePatternButtons();
+          updateSongCurrentSlot();
         }
       }
     }
@@ -904,6 +926,8 @@
     updateTrackControls();
     updatePatternButtons();
     updateActiveTrackPanel();
+    renderSongBar();
+    updateClipboardUI();
   }
 
   function updateTransportUI() {
@@ -990,9 +1014,23 @@
     document.getElementById('atCutoff').value = Math.round(p.filterCutoff * 100);
     document.getElementById('atCutoffV').textContent = Math.round(p.filterCutoff * 100);
 
+    const atPan = document.getElementById('atPan');
+    if (atPan) {
+      const panVal = Math.round((p.pan || 0) * 100);
+      atPan.value = panVal;
+      const atPanV = document.getElementById('atPanV');
+      if (atPanV) atPanV.textContent = panToLabel(p.pan || 0);
+    }
+
     document.querySelectorAll('.seq__row').forEach(r => {
       r.classList.toggle('seq__row--active', r.dataset.track === String(i));
     });
+  }
+
+  function panToLabel(v) {
+    if (Math.abs(v) < 0.02) return 'C';
+    const pct = Math.round(Math.abs(v) * 100);
+    return (v < 0 ? 'L' : 'R') + pct;
   }
 
   function updateTrackControls() {
@@ -1071,6 +1109,86 @@
     showToast(`Pattern ${currentPattern} pulito`);
   }
 
+  // ============================================================
+  // 15b) COPY / PASTE pattern
+  // ============================================================
+  function copyPattern() {
+    patternClipboard = JSON.parse(JSON.stringify(patterns[currentPattern]));
+    showToast(`Pattern ${currentPattern} copiato`);
+    updateClipboardUI();
+  }
+
+  function pastePattern() {
+    if (!patternClipboard) {
+      showToast('Clipboard vuota', true);
+      return;
+    }
+    patterns[currentPattern] = JSON.parse(JSON.stringify(patternClipboard));
+    refreshPatternUI();
+    updatePatternButtons();
+    pushHistory();
+    showToast(`Incollato in ${currentPattern}`);
+  }
+
+  function updateClipboardUI() {
+    const pb = document.getElementById('pasteBtn');
+    if (pb) pb.classList.toggle('chip--armed', !!patternClipboard);
+  }
+
+  // ============================================================
+  // 15c) SONG EDITOR (sequence A/B/C/D con click-to-cycle)
+  // ============================================================
+  const SONG_ORDER = ['A','B','C','D'];
+
+  function renderSongBar() {
+    const wrap = document.getElementById('songSlots');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    songSequence.forEach((name, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'song-slot';
+      btn.dataset.songIdx = String(i);
+      btn.textContent = name;
+      btn.classList.toggle('song-slot--current', playing && songMode && i === songStep);
+      btn.setAttribute('aria-label', `Slot ${i + 1}: pattern ${name}`);
+      btn.addEventListener('click', () => cycleSongSlot(i));
+      wrap.appendChild(btn);
+    });
+    const len = document.getElementById('songLenVal');
+    if (len) len.textContent = String(songSequence.length);
+  }
+
+  function cycleSongSlot(i) {
+    const cur = songSequence[i];
+    const idx = SONG_ORDER.indexOf(cur);
+    songSequence[i] = SONG_ORDER[(idx + 1) % SONG_ORDER.length];
+    renderSongBar();
+    pushHistory();
+  }
+
+  function songAddSlot() {
+    if (songSequence.length >= 16) { showToast('Max 16 slot'); return; }
+    songSequence.push(songSequence[songSequence.length - 1] || 'A');
+    renderSongBar();
+    pushHistory();
+  }
+
+  function songRemoveSlot() {
+    if (songSequence.length <= 1) { showToast('Minimo 1 slot'); return; }
+    songSequence.pop();
+    renderSongBar();
+    pushHistory();
+  }
+
+  function updateSongCurrentSlot() {
+    // Aggiorna solo l'evidenziazione (performance-friendly)
+    const slots = document.querySelectorAll('.song-slot');
+    slots.forEach((el, i) => {
+      el.classList.toggle('song-slot--current', playing && songMode && i === songStep);
+    });
+  }
+
   function loadDemo() {
     // Demo principale in A: classico four-on-the-floor + hi-hat ottavi + clap
     const demoA = makeEmptyPattern();
@@ -1112,6 +1230,7 @@
       bpm, swing, patternLength, humanize,
       trackParams,
       patterns,
+      songSequence,
     };
   }
 
@@ -1122,10 +1241,20 @@
     if (typeof data.patternLength === 'number') patternLength = data.patternLength;
     if (typeof data.humanize === 'boolean') humanize = data.humanize;
     if (Array.isArray(data.trackParams) && data.trackParams.length === NUM_TRACKS) {
-      trackParams = data.trackParams;
+      // Merge con default per backward compatibility (pan è recente)
+      trackParams = data.trackParams.map(p => ({
+        volume: 0.85, mute: false, solo: false,
+        pitch: 0, decay: 1.0,
+        filterType: 'off', filterCutoff: 0.7, filterQ: 1.0,
+        pan: 0,
+        ...p,
+      }));
     }
     if (data.patterns && typeof data.patterns === 'object') {
       patterns = data.patterns;
+    }
+    if (Array.isArray(data.songSequence) && data.songSequence.length > 0) {
+      songSequence = data.songSequence;
     }
     refreshAllUI();
     applyTrackParams();
@@ -1382,6 +1511,7 @@
       for (let i = 0; i < len; i++) nd[i] = Math.random() * 2 - 1;
 
       const oFilters = [];
+      const oPanners = [];
       for (let i = 0; i < NUM_TRACKS; i++) {
         const f = ctx.createBiquadFilter();
         const p = trackParams[i];
@@ -1392,11 +1522,18 @@
         const anySolo = trackParams.some(pp => pp.solo);
         g.gain.value = p.mute ? 0 : (anySolo && !p.solo ? 0 : p.volume);
 
-        f.connect(g).connect(master);
+        const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+        if (pan) {
+          pan.pan.value = p.pan || 0;
+          pan.connect(f).connect(g).connect(master);
+        } else {
+          f.connect(g).connect(master);
+        }
         oFilters.push(f);
+        oPanners.push(pan);
       }
 
-      const ofVoices = buildOfflineVoices(ctx, noise, oFilters);
+      const ofVoices = buildOfflineVoices(ctx, noise, oPanners.map((p, i) => p || oFilters[i]));
 
       // Schedula ogni pattern della sequenza, uno dopo l'altro
       sequence.forEach((patName, idxInSeq) => {
@@ -1865,11 +2002,43 @@
       applyTrackParams();
     });
 
+    const atPanEl = document.getElementById('atPan');
+    if (atPanEl) {
+      atPanEl.addEventListener('input', e => {
+        const v = parseInt(e.target.value, 10) / 100;
+        trackParams[activeTrack].pan = v;
+        const lbl = document.getElementById('atPanV');
+        if (lbl) lbl.textContent = panToLabel(v);
+        applyTrackParams();
+      });
+      atPanEl.addEventListener('change', pushHistory);
+      // Double-click to reset to center
+      atPanEl.addEventListener('dblclick', () => {
+        trackParams[activeTrack].pan = 0;
+        atPanEl.value = 0;
+        document.getElementById('atPanV').textContent = 'C';
+        applyTrackParams();
+        pushHistory();
+      });
+    }
+
     // Snapshot su "change" finale (non su input per evitare history gigante)
     ['atVol','atPitch','atDecay','atCutoff'].forEach(id => {
       document.getElementById(id).addEventListener('change', pushHistory);
     });
     document.getElementById('atFilter').addEventListener('change', pushHistory);
+
+    // --- Copy / Paste pattern ---
+    const copyBtn = document.getElementById('copyBtn');
+    const pasteBtn = document.getElementById('pasteBtn');
+    if (copyBtn) copyBtn.addEventListener('click', copyPattern);
+    if (pasteBtn) pasteBtn.addEventListener('click', pastePattern);
+
+    // --- Song editor ---
+    const songAddBtn = document.getElementById('songAddBtn');
+    const songRemoveBtn = document.getElementById('songRemoveBtn');
+    if (songAddBtn) songAddBtn.addEventListener('click', songAddSlot);
+    if (songRemoveBtn) songRemoveBtn.addEventListener('click', songRemoveSlot);
 
     // --- Edit mode ---
     document.querySelectorAll('[data-edit-mode]').forEach(btn => {
@@ -1940,6 +2109,35 @@
       if (e.key === 't' || e.key === 'T') { unlockAudio(); tapTempo(); return; }
       if (e.key === 'c' || e.key === 'C') { clearCurrentPattern(); return; }
       if (e.key === 'd' || e.key === 'D') { loadDemo(); pushHistory(); return; }
+      if (e.key === 'm' || e.key === 'M') {
+        trackParams[activeTrack].mute = !trackParams[activeTrack].mute;
+        applyTrackParams(); updateTrackControls();
+        showToast(`${TRACK_DEFS[activeTrack].name} ${trackParams[activeTrack].mute ? 'muted' : 'unmuted'}`);
+        return;
+      }
+      if (e.key === 's' || e.key === 'S') {
+        trackParams[activeTrack].solo = !trackParams[activeTrack].solo;
+        applyTrackParams(); updateTrackControls();
+        showToast(`${TRACK_DEFS[activeTrack].name} solo ${trackParams[activeTrack].solo ? 'on' : 'off'}`);
+        return;
+      }
+      if (e.key === '[') {
+        const i = SONG_ORDER.indexOf(currentPattern);
+        switchPattern(SONG_ORDER[(i - 1 + 4) % 4]);
+        return;
+      }
+      if (e.key === ']') {
+        const i = SONG_ORDER.indexOf(currentPattern);
+        switchPattern(SONG_ORDER[(i + 1) % 4]);
+        return;
+      }
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        const dir = e.key === 'ArrowUp' ? -1 : 1;
+        const newT = (activeTrack + dir + NUM_TRACKS) % NUM_TRACKS;
+        setActiveTrack(newT);
+        return;
+      }
       if (e.key >= '1' && e.key <= '4') {
         const idx = parseInt(e.key, 10) - 1;
         switchPattern(['A','B','C','D'][idx]);

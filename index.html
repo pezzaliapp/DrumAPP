@@ -69,6 +69,10 @@
           <input type="range" id="atVol" min="0" max="100" value="85">
         </label>
         <label class="knob">
+          <span class="knob__label">PAN <span class="knob__val" id="atPanV">C</span></span>
+          <input type="range" id="atPan" min="-100" max="100" value="0" title="Doppio click per centro">
+        </label>
+        <label class="knob">
           <span class="knob__label">PITCH <span class="knob__val" id="atPitchV">+0</span></span>
           <input type="range" id="atPitch" min="-12" max="12" value="0">
         </label>
@@ -134,6 +138,18 @@
 
     <div class="step-readout" id="stepReadout">—</div>
 
+    <!-- ================= SONG EDITOR ================= -->
+    <section class="songbar" aria-label="Song editor">
+      <span class="storage__label">SEQUENCE</span>
+      <div class="songbar__slots" id="songSlots"></div>
+      <div class="songbar__ctl">
+        <button class="song-ctl-btn" id="songRemoveBtn" type="button" title="Rimuovi ultimo slot">−</button>
+        <span class="songbar__len">len <span id="songLenVal">4</span></span>
+        <button class="song-ctl-btn" id="songAddBtn" type="button" title="Aggiungi slot">+</button>
+      </div>
+      <span class="songbar__hint">click = cambia · attiva SONG per suonare in sequenza</span>
+    </section>
+
     <!-- ================= STORAGE ================= -->
     <section class="storage" aria-label="Salvataggio e condivisione">
       <div class="storage__group">
@@ -163,6 +179,8 @@
 
       <div class="storage__group">
         <span class="storage__label">HIST</span>
+        <button class="chip chip--ghost" id="copyBtn" type="button" title="Copia il pattern corrente">COPY</button>
+        <button class="chip chip--ghost" id="pasteBtn" type="button" title="Incolla sul pattern corrente">PASTE</button>
         <button class="chip chip--ghost" id="undoBtn" type="button" title="Undo (Cmd/Ctrl+Z)">UNDO</button>
         <button class="chip chip--ghost" id="redoBtn" type="button" title="Redo (Cmd/Ctrl+Shift+Z)">REDO</button>
       </div>
@@ -175,7 +193,7 @@
         <button class="chip chip--ghost" id="clearBtn" type="button">CLEAR</button>
       </div>
       <div class="foot__shortcuts">
-        <kbd>SPACE</kbd> play · <kbd>T</kbd> tap · <kbd>1-4</kbd> pattern · <kbd>C</kbd> clear · <kbd>⌘Z</kbd> undo
+        <kbd>SPACE</kbd> play · <kbd>T</kbd> tap · <kbd>1-4</kbd> pattern · <kbd>↑↓</kbd> traccia · <kbd>M</kbd>/<kbd>S</kbd> mute/solo · <kbd>C</kbd> clear · <kbd>⌘Z</kbd> undo
       </div>
       <div class="foot__meta">
         <span>PWA · Web Audio · No samples</span>

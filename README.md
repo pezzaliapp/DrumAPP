@@ -11,8 +11,9 @@ Una drum machine **professionale a 8 voci** nel browser. 16 step (8/12/16/24/32)
 ### Sequencer
 - **16 step di default**, lunghezza variabile (8 / 12 / 16 / 24 / 32)
 - **8 voci sintetiche**: Kick · Snare · Hi-Hat · Open HH · Clap · Tom · Rimshot · Cowbell
-- **4 pattern live A/B/C/D** con switch istantaneo durante il play
-- **Song mode**: concatena i pattern in una sequenza (default A-A-B-A)
+- **4 pattern live A/B/C/D** con switch istantaneo durante il play (tasti `1-4` o `[` / `]`)
+- **Copy/Paste pattern** — duplica il pattern corrente per poi ritoccarlo
+- **Song mode con editor visuale** — riga `SEQUENCE: [A][A][B][A]` con click-to-cycle, bottoni `+`/`−` per allungare/accorciare, fino a 16 slot. Lo slot corrente si illumina di arancione durante la playback.
 
 ### Timing & Groove
 - **BPM 60–200** con slider
@@ -24,6 +25,7 @@ Una drum machine **professionale a 8 voci** nel browser. 16 step (8/12/16/24/32)
 ### Per ogni traccia
 Click sul **nome** della traccia per selezionarla. In alto appaiono i parametri:
 - **Volume** 0–100%
+- **Pan** L100–Centro–R100 (doppio click per centrare)
 - **Mute / Solo** (inline, M/S)
 - **Pitch** ±12 semitoni
 - **Decay** 0.4x – 2.5x (corto / lungo)
@@ -58,6 +60,9 @@ Cambia modalità con i bottoni `TRIG / VEL / PROB / RATCH / NUDGE`:
 | `SPACE` | Play / Stop |
 | `T` | Tap tempo |
 | `1` – `4` | Switch pattern A/B/C/D |
+| `[` / `]` | Pattern precedente / successivo |
+| `↑` / `↓` | Traccia attiva precedente / successiva |
+| `M` / `S` | Mute / Solo sulla traccia attiva |
 | `C` | Clear pattern corrente |
 | `D` | Load demo |
 | `Cmd/Ctrl + Z` | Undo |
