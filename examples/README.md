@@ -2,59 +2,78 @@
 
 Set di esempio importabili nell'app via il bottone **IMPORT**.
 
-## 📀 `demo-house.json`
+## 📀 Demo disponibili
 
-Mini-traccia house/techno di ~20 secondi a 124 BPM che dimostra **tutte** le feature Pro:
-
-| Feature             | Dove la trovi |
-|---------------------|-----------------------------------------------------|
-| Velocity variabile  | Pattern B/D: hi-hat con accenti sui pari            |
-| Probability         | Pattern B: rim al 65% · Pattern C: kick che "si rompe" |
-| Ratchet             | Pattern C: hi-hat 2x/3x nel fill · snare roll 4x    |
-| Nudge               | Pattern D: hi-hat off con +5ms (groove umano)       |
-| Swing               | 8% globale                                          |
-| Humanize            | On (± 12 ms timing, ± 15% velocity)                 |
-| Pan stereo          | Clap L40 · Hi-hat/Open HH R30 · Rim L50 · Cowbell R60 |
-| Pitch               | Kick -2 semitoni (profondo) · Tom +3 (acuto)        |
-| Decay               | Kick 1.5× lungo · Hi-hat 0.7× corto                 |
-| Filter              | Cowbell in high-pass 35% (più "metallico")          |
-| Song mode           | Sequenza: A A B B A B C D D B (intro · verse · build · drop · outro) |
-
-### Come usare
-1. Scarica `demo-house.json`
-2. Apri la PWA DrumAPP
-3. Clicca **IMPORT** → seleziona il file
-4. Attiva **SONG** nella modebar (altrimenti suona solo il pattern corrente in loop)
-5. Premi **PLAY** (o `SPACE`)
-
-### Struttura dei 4 pattern
-
-**A — Intro Minimal** · 12 hits
-Kick 4/4, clap back-beat (step 5/13), hi-hat off-beat (3/7/11/15), open hat su 7/15.
-
-**B — Verse Groove** · 28 hits
-Come A + hi-hat ottavi con dinamica (forte sui pari, debole sui dispari), cowbell in layer col clap, rim con probability 65% e 50% per variazioni.
-
-**C — Build-up** · 26 hits
-Tensione: kick con probability decrescente (100/100/85/60), hi-hat 16th con ratchet 2× e 3× nei fill finali, snare roll 4× sul 15, tom ascendente (10/12/14 con nudge e velocity crescenti).
-
-**D — Drop Full** · 35 hits
-Groove completo: kick+snare+clap layered, hi-hat 16th con velocity alternate e nudge +5ms sugli off, open hat off-beat, cowbell 16esimi dispari (feel latino-house), rim con probability, tom occasionale.
+| File | Stile | BPM | Durata | Caratteristica distintiva |
+|---|---|---|---|---|
+| [`demo-house.json`](demo-house.json) | House / Techno | 124 | ~20s | Pattern 4/4, pan stereo, build-up + drop |
+| [`demo-trap.json`](demo-trap.json)   | Trap / Hip-Hop  | 140 | ~17s | Kick 808 sincopato, hi-hat ratchet (triplette), snare roll finale |
 
 ---
 
-## 🛠 Generatore
+## 📀 `demo-house.json`
 
-Il file `_build_demo.py` è lo script Python che ha generato il JSON.
-Usalo come template per creare le tue demo:
+Mini-traccia house/techno a 124 BPM. Dimostra velocity alternate, probability, ratchet, nudge, pan stereo, pitch kick profondo, filter high-pass sulla cowbell.
+
+**Pattern:** A (Intro Minimal · 12 hit) → B (Verse Groove · 28) → C (Build-up · 26) → D (Drop Full · 35)
+**Sequence:** A A B B A B C D D B
+
+## 📀 `demo-trap.json`
+
+Trap beat moderno a 140 BPM (half-time feel = suona come 70). La firma sonora del trap sta nei **ratchet** degli hi-hat: l'orecchio sente le triplette velocissime che gli altri generi non hanno.
+
+**Pattern:** A (Intro · 14 hit) → B (Verse · 26) → C (Hype · 29) → D (Fill · 33)
+**Sequence:** A A B B C B B C C D
+**Signature moves:**
+- Kick sincopato su step 1-7-9-11 (non four-on-the-floor come house)
+- 808 pitchato -5 semitoni con decay 1.8× (sub profondo)
+- Hi-hat 16th con ratchet 2×/3×/4× (le famose triplette trap)
+- Snare roll finale 4× sullo step 15 del Pattern D
+- Clap layered col snare, pan L30 per creare larghezza stereo
+- Cowbell muted (non si usa nel trap)
+
+---
+
+## 🎛 Feature coperte dalle demo
+
+| Feature             | In quale demo |
+|---------------------|---------------|
+| Velocity variabile  | house, trap (hi-hat alternato) |
+| Probability         | house (rim 65%, kick prob), trap (ghost kick) |
+| Ratchet             | house (snare roll + hi-hat fill), **trap (ovunque)** |
+| Nudge               | house (hi-hat +5ms), trap (no, trap sta sul grid) |
+| Swing               | house (8%), trap (0%) |
+| Humanize            | house (on), trap (off) |
+| Pan stereo          | entrambi |
+| Pitch estremo       | trap (-5 su kick) |
+| Filter high-pass    | house (cowbell) |
+| Song mode           | entrambi |
+
+## Come usare
+
+1. Scarica il JSON
+2. Apri la PWA DrumAPP
+3. Clicca **IMPORT** → seleziona il file
+4. Attiva **SONG** nella modebar (altrimenti suona solo il Pattern A in loop)
+5. Premi **PLAY** (o `SPACE`)
+
+💡 Prima di cliccare DEMO, **salva** il set importato in uno SLOT (hold 500ms su A/B/C/D) per non perderlo.
+
+---
+
+## 🛠 Generatori
+
+Gli script Python `_build_demo.py` e `_build_trap.py` hanno generato i JSON. Usali come template:
 
 ```bash
 cd examples
-python3 _build_demo.py
+python3 _build_demo.py   # rigenera demo-house.json
+python3 _build_trap.py   # rigenera demo-trap.json
 ```
 
-Modifica la funzione `cell(vel, prob, ratch, nudge)` e le chiamate `set_steps()` per costruire i tuoi pattern, poi re-importa in DrumAPP.
+Modifica le chiamate `set_steps(pattern, track, [steps], vel=X, ratch=Y)` per creare le tue demo (dnb, techno minimal, ambient…).
 
 ## 📋 Formato
 
 Vedi il [README principale](../README.md#-formato-dati) per lo schema completo JSON v2.
+

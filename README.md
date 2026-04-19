@@ -173,7 +173,8 @@ Export JSON versione 2:
 
 Nella cartella [`examples/`](examples/) trovi set completi importabili col bottone **IMPORT**:
 
-- **[`demo-house.json`](examples/demo-house.json)** — mini-traccia house/techno a 124 BPM, 4 pattern (Intro · Verse · Build · Drop) concatenati in song mode. Usa velocity alternate, probability, ratchet (snare roll + hi-hat fill), nudge, pan stereo. **~20 secondi**, perfetta per capire cosa può fare DrumAPP Pro senza partire da zero.
+- **[`demo-house.json`](examples/demo-house.json)** — mini-traccia house/techno a 124 BPM, 4 pattern (Intro · Verse · Build · Drop) concatenati in song mode. Pattern 4/4 con pan stereo, velocity alternate, ratchet nei fill.
+- **[`demo-trap.json`](examples/demo-trap.json)** — trap beat moderno a 140 BPM (half-time feel). Kick 808 pitchato -5, hi-hat con triplette (ratchet 2×/3×/4×), snare roll 4× nel drop. Mostra perché i ratchet sono l'essenza del trap.
 
 Vedi il [README degli esempi](examples/README.md) per istruzioni d'uso e dettagli sui pattern.
 
