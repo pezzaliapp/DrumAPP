@@ -156,7 +156,8 @@
       <div class="storage__group">
         <span class="storage__label">OUT</span>
         <button class="chip" id="shareBtn" type="button">SHARE</button>
-        <button class="chip" id="wavBtn" type="button">WAV</button>
+        <button class="chip" id="wavBtn" type="button" title="Bounce WAV offline">BOUNCE</button>
+        <button class="chip chip--ghost" id="recBtn" type="button" title="Registra live ciò che senti">REC</button>
         <button class="chip chip--ghost" id="midiBtn" type="button">MIDI</button>
       </div>
 
@@ -181,6 +182,27 @@
         <span class="foot__sig">© pezzaliapp</span>
       </div>
     </footer>
+
+    <!-- ================= BOUNCE MODAL ================= -->
+    <div class="modal" id="bounceModal" role="dialog" aria-modal="true" aria-labelledby="bounceTitle">
+      <div class="modal__backdrop" id="bounceBackdrop"></div>
+      <div class="modal__box">
+        <h3 class="modal__title" id="bounceTitle">BOUNCE WAV</h3>
+        <p class="modal__sub">Rendering offline del pattern come file audio.<br>
+          Durata stimata: <span id="bounceDuration">8.0s</span>
+        </p>
+        <div class="modal__options">
+          <label class="modal__opt"><input type="radio" name="bloops" value="2" checked> <span>2 loop del pattern corrente</span></label>
+          <label class="modal__opt"><input type="radio" name="bloops" value="4"> <span>4 loop del pattern corrente</span></label>
+          <label class="modal__opt"><input type="radio" name="bloops" value="8"> <span>8 loop del pattern corrente</span></label>
+          <label class="modal__opt" id="bounceSongOpt"><input type="radio" name="bloops" value="song"> <span>Intera song (A-A-B-A…)</span></label>
+        </div>
+        <div class="modal__actions">
+          <button class="chip chip--ghost" id="bounceCancel" type="button">ANNULLA</button>
+          <button class="chip" id="bounceConfirm" type="button">RENDER</button>
+        </div>
+      </div>
+    </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </main>

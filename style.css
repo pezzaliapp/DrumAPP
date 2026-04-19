@@ -833,6 +833,107 @@ body::before {
 }
 
 /* ============================================================
+   REC button (stato recording = pulsante rosso)
+   ============================================================ */
+.chip--rec {
+  background: #c8553d !important;
+  color: var(--paper) !important;
+  border-color: #8e3825 !important;
+  animation: rec-pulse 0.9s ease-in-out infinite;
+}
+@keyframes rec-pulse {
+  0%, 100% { box-shadow: 0 2px 0 #8e3825, 0 0 0 0 rgba(200,85,61,0.6); }
+  50%      { box-shadow: 0 2px 0 #8e3825, 0 0 0 6px rgba(200,85,61,0); }
+}
+
+/* ============================================================
+   MODAL (bounce dialog)
+   ============================================================ */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.modal--open { display: flex; }
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(26,26,34,0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.modal__box {
+  position: relative;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.4rem;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 10px 0 var(--ink), 0 20px 40px rgba(0,0,0,0.25);
+  z-index: 1;
+  animation: modal-in 0.18s ease-out;
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal__title {
+  font-family: var(--f-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.modal__sub {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+.modal__sub span { font-family: var(--f-mono); color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.modal__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.modal__opt {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border: 1.5px solid var(--paper-rule);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+  font-size: 0.9rem;
+}
+.modal__opt:hover { background: rgba(26,26,34,0.04); }
+.modal__opt input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; }
+.modal__opt:has(input:checked) {
+  border-color: var(--ink);
+  background: rgba(247,127,0,0.08);
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* ============================================================
    Utility
    ============================================================ */
 :focus-visible {

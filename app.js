@@ -120,6 +120,14 @@
   let midiAccess = null;
   let midiOut = null;
 
+  // REC live (MediaRecorder su MediaStreamDestination)
+  let mediaRecDest = null;
+  let mediaRecorder = null;
+  let recChunks = [];
+  let isRecording = false;
+  let recStartTime = 0;
+  let recTimerHandle = null;
+
   // Tap tempo state
   let tapTimes = [];
 
@@ -133,6 +141,14 @@
     masterGain = audioCtx.createGain();
     masterGain.gain.value = 0.75;
     masterGain.connect(audioCtx.destination);
+
+    // Destination parallelo per il REC live (MediaRecorder)
+    try {
+      mediaRecDest = audioCtx.createMediaStreamDestination();
+      masterGain.connect(mediaRecDest);
+    } catch (e) {
+      mediaRecDest = null;
+    }
 
     // Rumore bianco pregenerato, condiviso
     const len = audioCtx.sampleRate * 2;
@@ -1291,19 +1307,71 @@
   }
 
   // ============================================================
-  // 19) EXPORT WAV (OfflineAudioContext - renderizza 2 loop)
+  // 19) BOUNCE WAV (OfflineAudioContext - render deterministic)
+  //     Opzioni: numero di loop oppure intera song sequence
   // ============================================================
-  async function exportWav() {
-    showToast('Rendering WAV in corso…');
+
+  /**
+   * Apre il modal di selezione loops/song.
+   */
+  function openBounceDialog() {
+    unlockAudio();
+    const modal = document.getElementById('bounceModal');
+    if (!modal) return;
+    // Mostra/nascondi opzione song in base a sequence presente
+    const songOpt = document.getElementById('bounceSongOpt');
+    if (songOpt) {
+      songOpt.style.display = (songSequence && songSequence.length > 0) ? '' : 'none';
+    }
+    // Default: ultima scelta o 2 loops
+    updateBounceDuration();
+    modal.classList.add('modal--open');
+  }
+
+  function closeBounceDialog() {
+    const modal = document.getElementById('bounceModal');
+    if (modal) modal.classList.remove('modal--open');
+  }
+
+  function updateBounceDuration() {
+    const choice = document.querySelector('input[name="bloops"]:checked');
+    if (!choice) return;
+    const secondsPerStep = (60 / bpm) / 4;
+    let totalSec = 0;
+    if (choice.value === 'song') {
+      totalSec = songSequence.length * patternLength * secondsPerStep;
+    } else {
+      const n = parseInt(choice.value, 10);
+      totalSec = n * patternLength * secondsPerStep;
+    }
+    const el = document.getElementById('bounceDuration');
+    if (el) el.textContent = totalSec.toFixed(1) + 's';
+  }
+
+  async function doBounce() {
+    const choice = document.querySelector('input[name="bloops"]:checked');
+    if (!choice) return;
+
+    // Costruisci la sequenza di pattern da renderizzare
+    let sequence;
+    if (choice.value === 'song') {
+      sequence = songSequence.slice();
+    } else {
+      const n = parseInt(choice.value, 10);
+      sequence = new Array(n).fill(currentPattern);
+    }
+
+    closeBounceDialog();
+    showToast('Bounce in corso…');
+
     try {
-      const loops = 2;
       const secondsPerStep = (60 / bpm) / 4;
-      const totalSec = secondsPerStep * patternLength * loops + 0.5;
+      const totalSteps = sequence.length * patternLength;
+      const totalSec = totalSteps * secondsPerStep + 0.6; // tail
       const sr = 44100;
       const OfflineCtx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
       const ctx = new OfflineCtx(2, Math.ceil(sr * totalSec), sr);
 
-      // Rebuild catena audio nell'offline context
       const master = ctx.createGain();
       master.gain.value = 0.75;
       master.connect(ctx.destination);
@@ -1313,7 +1381,7 @@
       const nd = noise.getChannelData(0);
       for (let i = 0; i < len; i++) nd[i] = Math.random() * 2 - 1;
 
-      const oFilters = [], oGains = [];
+      const oFilters = [];
       for (let i = 0; i < NUM_TRACKS; i++) {
         const f = ctx.createBiquadFilter();
         const p = trackParams[i];
@@ -1325,18 +1393,21 @@
         g.gain.value = p.mute ? 0 : (anySolo && !p.solo ? 0 : p.volume);
 
         f.connect(g).connect(master);
-        oFilters.push(f); oGains.push(g);
+        oFilters.push(f);
       }
 
-      // Synth "offline": come le originali ma usando ctx invece di audioCtx
       const ofVoices = buildOfflineVoices(ctx, noise, oFilters);
 
-      // Schedula tutti gli step
-      for (let l = 0; l < loops; l++) {
+      // Schedula ogni pattern della sequenza, uno dopo l'altro
+      sequence.forEach((patName, idxInSeq) => {
+        const pat = patterns[patName];
+        if (!pat) return;
+        const seqOffset = idxInSeq * patternLength * secondsPerStep;
+
         for (let s = 0; s < patternLength; s++) {
-          const baseTime = l * patternLength * secondsPerStep + s * secondsPerStep + stepTimeOffset(s, secondsPerStep);
+          const baseTime = seqOffset + s * secondsPerStep + stepTimeOffset(s, secondsPerStep);
           for (let t = 0; t < NUM_TRACKS; t++) {
-            const cell = patterns[currentPattern][t][s];
+            const cell = pat[t][s];
             if (!cell) continue;
             if (cell.prob < 100 && Math.random() * 100 >= cell.prob) continue;
             const tp = trackParams[t];
@@ -1355,7 +1426,7 @@
             }
           }
         }
-      }
+      });
 
       const buffer = await ctx.startRendering();
       const wav = bufferToWav(buffer);
@@ -1364,13 +1435,14 @@
       const a = document.createElement('a');
       a.href = url;
       const ts = new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);
-      a.download = `drumapp-${currentPattern}-${ts}.wav`;
+      const tag = choice.value === 'song' ? 'song' : `${choice.value}loops`;
+      a.download = `drumapp-bounce-${tag}-${ts}.wav`;
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
       setTimeout(() => URL.revokeObjectURL(url), 2000);
-      showToast('WAV pronto');
+      showToast('Bounce pronto');
     } catch (e) {
       console.error(e);
-      showToast('Errore WAV', true);
+      showToast('Errore bounce', true);
     }
   }
 
@@ -1571,6 +1643,121 @@
   }
 
   // ============================================================
+  // 20b) REC LIVE (MediaRecorder -> cattura tutto cio' che suona)
+  // ============================================================
+
+  /** Cerca il miglior MIME type supportato dal browser */
+  function getRecMime() {
+    if (!window.MediaRecorder) return null;
+    const candidates = [
+      'audio/webm;codecs=opus',
+      'audio/webm',
+      'audio/mp4',
+      'audio/ogg;codecs=opus',
+    ];
+    for (const t of candidates) {
+      try { if (MediaRecorder.isTypeSupported(t)) return t; }
+      catch (e) { /* ignore */ }
+    }
+    return '';
+  }
+
+  function recExtension(mime) {
+    if (!mime) return 'webm';
+    if (mime.includes('webm')) return 'webm';
+    if (mime.includes('ogg'))  return 'ogg';
+    if (mime.includes('mp4'))  return 'm4a';
+    return 'webm';
+  }
+
+  function toggleRec() {
+    unlockAudio();
+    if (!window.MediaRecorder) {
+      showToast('MediaRecorder non supportato qui', true);
+      return;
+    }
+    if (!mediaRecDest) {
+      showToast('Destination audio non disponibile', true);
+      return;
+    }
+    if (isRecording) stopRec();
+    else startRec();
+  }
+
+  function startRec() {
+    try {
+      const mime = getRecMime();
+      const opts = mime ? { mimeType: mime } : {};
+      mediaRecorder = new MediaRecorder(mediaRecDest.stream, opts);
+      recChunks = [];
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) recChunks.push(e.data);
+      };
+      mediaRecorder.onstop = () => finalizeRec(mime);
+      mediaRecorder.onerror = (e) => {
+        console.error('MediaRecorder error:', e);
+        showToast('Errore REC', true);
+        isRecording = false; updateRecButton();
+      };
+      mediaRecorder.start(200);
+      isRecording = true;
+      recStartTime = performance.now();
+      updateRecButton();
+      showToast('REC avviato — premi di nuovo per fermare');
+      // Timer visivo per il tempo di registrazione
+      tickRecTimer();
+    } catch (e) {
+      console.error(e);
+      showToast('REC fallita: ' + e.message, true);
+      isRecording = false; updateRecButton();
+    }
+  }
+
+  function stopRec() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      try { mediaRecorder.stop(); } catch (e) { /* ignore */ }
+    }
+    isRecording = false;
+    if (recTimerHandle) { clearInterval(recTimerHandle); recTimerHandle = null; }
+    updateRecButton();
+  }
+
+  function finalizeRec(mime) {
+    const blob = new Blob(recChunks, { type: mime || 'audio/webm' });
+    const ext = recExtension(mime);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const ts = new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);
+    a.download = `drumapp-live-${ts}.${ext}`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    showToast(`REC salvato (${(blob.size / 1024).toFixed(0)} kB)`);
+    recChunks = [];
+  }
+
+  function tickRecTimer() {
+    if (recTimerHandle) clearInterval(recTimerHandle);
+    const btn = document.getElementById('recBtn');
+    if (!btn) return;
+    recTimerHandle = setInterval(() => {
+      if (!isRecording) { clearInterval(recTimerHandle); recTimerHandle = null; return; }
+      const sec = (performance.now() - recStartTime) / 1000;
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      btn.textContent = `REC ${m}:${String(s).padStart(2,'0')}`;
+    }, 250);
+  }
+
+  function updateRecButton() {
+    const btn = document.getElementById('recBtn');
+    if (!btn) return;
+    btn.classList.toggle('chip--rec', isRecording);
+    btn.classList.toggle('chip--on', isRecording);
+    if (!isRecording) btn.textContent = 'REC';
+  }
+
+  // ============================================================
   // 21) TAP TEMPO
   // ============================================================
   function tapTempo() {
@@ -1720,10 +1907,22 @@
       importFile.value = '';
     });
 
-    // --- Share / WAV / MIDI ---
+    // --- Share / Bounce / REC / MIDI ---
     document.getElementById('shareBtn').addEventListener('click', shareLink);
-    document.getElementById('wavBtn').addEventListener('click', exportWav);
+    document.getElementById('wavBtn').addEventListener('click', openBounceDialog);
+    document.getElementById('recBtn').addEventListener('click', toggleRec);
     document.getElementById('midiBtn').addEventListener('click', initMIDI);
+
+    // --- Bounce modal handlers ---
+    document.querySelectorAll('input[name="bloops"]').forEach(r => {
+      r.addEventListener('change', updateBounceDuration);
+    });
+    const bConfirm = document.getElementById('bounceConfirm');
+    if (bConfirm) bConfirm.addEventListener('click', doBounce);
+    const bCancel = document.getElementById('bounceCancel');
+    if (bCancel) bCancel.addEventListener('click', closeBounceDialog);
+    const bBackdrop = document.getElementById('bounceBackdrop');
+    if (bBackdrop) bBackdrop.addEventListener('click', closeBounceDialog);
 
     // --- Undo / Redo ---
     document.getElementById('undoBtn').addEventListener('click', undo);

@@ -38,7 +38,8 @@ Cambia modalità con i bottoni `TRIG / VEL / PROB / RATCH / NUDGE`:
 - **NUDGE**: drag per micro-timing (±50 ms) — sposta lo step off-grid
 
 ### Output
-- **Export WAV**: renderizza 2 loop del pattern corrente via `OfflineAudioContext`, scarica `.wav` 44.1 kHz 16-bit stereo
+- **BOUNCE WAV**: render deterministico offline del pattern via `OfflineAudioContext`. Apre un dialog dove scegli 2 / 4 / 8 loop o "intera song" (se SONG è attivo, renderizza tutta la sequence A-A-B-A). Veloce, file `.wav` 44.1 kHz 16-bit stereo, pulito come uno studio.
+- **REC LIVE**: registra *in tempo reale* tutto ciò che esce dalle casse — knob twist, cambi di pattern, modifiche di volume, mute/solo. Premi una volta per iniziare (bottone rosso pulsante con timer), premi di nuovo per fermare e scaricare. File `.webm` (Opus) ~8× più piccolo del WAV a qualità equivalente. Utile per catturare performance improvvisate.
 - **Export / Import JSON**: salva/carica l'intero "set" (tutti i pattern + parametri tracce + swing)
 - **Share link**: URL compatto col pattern corrente (hex encoding)
 - **Web MIDI out**: invia note General MIDI sulla prima porta disponibile (kick=36, snare=38, hihat=42, ecc.)
