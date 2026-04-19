@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>DrumAPP — 16 Step Drum Machine</title>
+  <meta name="description" content="Drum Machine a 16 step con sintesi audio nativa del browser. Installabile come PWA. Kick, Snare, Hi-Hat, Clap sintetizzati via Web Audio API.">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a1a22">
+  <meta name="color-scheme" content="light">
+
+  <!-- iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="DrumAPP">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Sans:wght@400;500;600;700&family=VT323&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="stage">
+
+    <!-- Pannello superiore: brand, play, tempo -->
+    <header class="top">
+      <div class="brand">
+        <h1 class="brand__name">DRUM<span class="brand__slash">/</span>APP</h1>
+        <p class="brand__tag">16-STEP MACHINE · EDITION N°01</p>
+      </div>
+
+      <button class="transport" id="playButton" type="button" aria-label="Play/Stop">
+        <span class="transport__icon" id="playIcon" aria-hidden="true">▶</span>
+        <span class="transport__label" id="playLabel">PLAY</span>
+      </button>
+
+      <div class="tempo">
+        <div class="tempo__head">
+          <span class="tempo__label">TEMPO</span>
+          <span class="tempo__unit">BPM</span>
+        </div>
+        <div class="tempo__readout" id="bpmValue">120</div>
+        <input type="range" id="bpmSlider" min="60" max="200" value="120" class="tempo__slider" aria-label="BPM">
+        <div class="tempo__range">
+          <span>60</span>
+          <span>200</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sequencer -->
+    <section class="sequencer-wrap">
+      <div class="sequencer" id="sequencer" role="grid" aria-label="Step sequencer"></div>
+    </section>
+
+    <!-- Footer: controlli secondari + meta -->
+    <footer class="foot">
+      <div class="foot__controls">
+        <button class="chip" id="demoBtn" type="button">DEMO</button>
+        <button class="chip chip--ghost" id="clearBtn" type="button">CLEAR</button>
+      </div>
+      <div class="foot__shortcuts">
+        <kbd>SPACE</kbd> play  ·  <kbd>C</kbd> clear  ·  <kbd>D</kbd> demo
+      </div>
+      <div class="foot__meta">
+        <span>PWA · Web Audio · No samples</span>
+        <span class="foot__sig">© pezzaliapp</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="app.js" defer></script>
+  <script>
+    // Registrazione service worker per funzionamento offline
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js').catch(err => {
+          console.warn('SW registration failed:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
