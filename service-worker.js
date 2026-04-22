@@ -1,12 +1,15 @@
 /* ==============================================================
-   DrumAPP · Service Worker
-   Strategia: cache-first per gli asset statici,
-   con caching "on-the-fly" dei font di Google quando richiesti.
+   DrumAPP · Service Worker v9
+   Strategia:
+     - network-first per HTML/JS/CSS/JSON (gli aggiornamenti arrivano subito)
+     - cache-first per icone e font (stabili, risparmia banda)
+     - fallback su cache se offline
+     - skipWaiting + clients.claim -> aggiornamento immediato al deploy
    ============================================================== */
 
-const CACHE_NAME = 'drumapp-v8';
+const CACHE_NAME = 'drumapp-v9';
 
-// Asset locali della PWA
+// Asset locali precaricati all'install
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -19,15 +22,16 @@ const CORE_ASSETS = [
   './icons/icon-512-maskable.png'
 ];
 
-// ----- INSTALL: pre-carica gli asset core ----------------------
+// ----- INSTALL: pre-carica gli asset core -----------------------
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS))
   );
+  // Attiva subito la nuova versione senza aspettare la chiusura tab
   self.skipWaiting();
 });
 
-// ----- ACTIVATE: pulisce eventuali cache vecchie ---------------
+// ----- ACTIVATE: pulisce cache vecchie e prende controllo -------
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
@@ -38,31 +42,77 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// ----- FETCH: cache-first + runtime caching per font ------------
+// ----- MESSAGE: permette alla pagina di forzare skipWaiting ------
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+// ----- FETCH: strategie differenziate ---------------------------
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
 
   const url = new URL(req.url);
+
   const isGoogleFont =
     url.hostname === 'fonts.googleapis.com' ||
     url.hostname === 'fonts.gstatic.com';
 
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
+  const isSameOrigin = url.origin === location.origin;
 
-      return fetch(req)
+  // Asset che cambiano spesso: HTML, JS, CSS, JSON (demo library)
+  // -> NETWORK FIRST: prova la rete, cache come fallback
+  const isVolatile =
+    isSameOrigin && (
+      req.destination === 'document' ||
+      req.destination === 'script'   ||
+      req.destination === 'style'    ||
+      url.pathname.endsWith('.json') ||
+      url.pathname.endsWith('.html') ||
+      url.pathname.endsWith('.js')   ||
+      url.pathname.endsWith('.css')
+    );
+
+  if (isVolatile) {
+    event.respondWith(
+      fetch(req)
         .then((res) => {
-          // Cachiamo al volo i font di Google e le risposte same-origin
-          if (res && res.ok && (isGoogleFont || url.origin === location.origin)) {
+          // Salva in cache la risposta fresca
+          if (res && res.ok) {
             const clone = res.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
           }
           return res;
         })
         .catch(() => {
-          // Fallback: se la richiesta e' un documento HTML, ritorna index.html
+          // Offline -> cache fallback
+          return caches.match(req).then((cached) => {
+            if (cached) return cached;
+            if (req.destination === 'document') {
+              return caches.match('./index.html');
+            }
+          });
+        })
+    );
+    return;
+  }
+
+  // Asset stabili: icone, immagini, font -> CACHE FIRST
+  event.respondWith(
+    caches.match(req).then((cached) => {
+      if (cached) return cached;
+
+      return fetch(req)
+        .then((res) => {
+          if (res && res.ok && (isGoogleFont || isSameOrigin)) {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
+          }
+          return res;
+        })
+        .catch(() => {
           if (req.destination === 'document') {
             return caches.match('./index.html');
           }
