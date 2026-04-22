@@ -1172,10 +1172,26 @@
     { file: 'demo-house.json',            name: 'House / Techno',       bpm: 124, tag: 'modern', desc: '4/4 dritto, build + drop' },
     { file: 'demo-trap.json',             name: 'Trap moderno',         bpm: 140, tag: 'modern', desc: '808 + ratchet hats' },
     { file: 'demo-boombap.json',          name: 'Boom Bap anni 90',     bpm:  90, tag: 'modern', desc: 'Swing 52% Dilla style' },
-    { file: 'demo-dnb.json',              name: 'DNB / Amen break',     bpm: 170, tag: 'modern', desc: 'Jungle, ghost snare al 7' },
+    { file: 'demo-dnb.json',               name: 'DNB / Amen break',     bpm: 170, tag: 'modern', desc: 'Jungle, ghost snare al 7' },
     { file: 'demo-makesomenoise.json',    name: 'NYC Hip-Hop 2011',     bpm: 105, tag: 'modern', desc: 'Kick doppio, cowbell' },
     { file: 'demo-ukhardcore.json',       name: 'UK Hardcore 92-93',    bpm: 140, tag: 'modern', desc: 'Pre-jungle rave' },
     { file: 'demo-onedrop.json',          name: 'Dub / Reggae',         bpm:  80, tag: 'modern', desc: '★ Beat sul 3, filosofia invertita' },
+
+    // ★ Iconici "DA DA DA" / da stadio
+    { file: 'demo-dadada.json',           name: 'Da Da Da-style',       bpm: 120, tag: 'iconic', desc: '1982 · Trio, Casio VL-Tone preset' },
+    { file: 'demo-wewillrockyou.json',    name: 'We Will Rock You',     bpm:  81, tag: 'iconic', desc: '1977 · stomp-stomp-CLAP universale' },
+    { file: 'demo-sevennation.json',      name: 'Seven Nation Army',    bpm: 124, tag: 'iconic', desc: '2003 · DA-da-DA-DA da stadio' },
+    { file: 'demo-anotherone.json',       name: 'Another One-style',    bpm: 110, tag: 'iconic', desc: '1980 · Queen rock-disco' },
+
+    // Funk-riff iconici
+    { file: 'demo-superstition.json',     name: 'Superstition-style',   bpm: 100, tag: 'iconic', desc: '1972 · Stevie funky ghost' },
+    { file: 'demo-rosanna.json',          name: 'Rosanna Shuffle',      bpm:  87, tag: 'iconic', desc: '1982 · Porcaro half-time shuffle' },
+    { file: 'demo-stayinalive.json',      name: "Stayin' Alive",        bpm: 103, tag: 'iconic', desc: '1977 · disco (ritmo RCP!)' },
+
+    // Cinematografici / speciali
+    { file: 'demo-takefive.json',         name: 'Take Five (5/4!)',     bpm: 172, tag: 'iconic', desc: '1959 · ★ unico in 5/4' },
+    { file: 'demo-wipeout.json',          name: 'Wipe Out',             bpm: 162, tag: 'iconic', desc: '1963 · surf drum solo 16th' },
+
     // Break storici
     { file: 'demo-billiejean.json',       name: 'Billie Jean-style',    bpm: 117, tag: 'classic', desc: '1982 · Linn LM-1 metronomica' },
     { file: 'demo-funkydrummer.json',     name: 'Funky Drummer-style',  bpm: 103, tag: 'classic', desc: '1970 · break piu campionato' },
@@ -1197,10 +1213,11 @@
         card.type = 'button';
         card.className = 'demo-card demo-card--' + d.tag;
         card.dataset.demo = d.file;
+        const icon = d.tag === 'classic' ? '🏛' : d.tag === 'iconic' ? '⭐' : '🎛';
         card.innerHTML = `
           <div class="demo-card__head">
             <span class="demo-card__bpm">${d.bpm}</span>
-            <span class="demo-card__tag">${d.tag === 'classic' ? '🏛' : '🎛'}</span>
+            <span class="demo-card__tag">${icon}</span>
           </div>
           <div class="demo-card__name">${d.name}</div>
           <div class="demo-card__desc">${d.desc}</div>

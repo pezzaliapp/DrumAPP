@@ -1160,6 +1160,13 @@ body::before {
   color: var(--ink);
 }
 
+.demo-card--iconic {
+  background: linear-gradient(180deg, var(--paper-2) 0%, rgba(255,214,0,0.08) 100%);
+}
+.demo-card--iconic .demo-card__bpm {
+  color: var(--accent-deep);
+}
+
 @media (max-width: 560px) {
   .demos__grid { grid-template-columns: 1fr 1fr; gap: 0.4rem; }
   .demo-card { padding: 0.55rem 0.6rem 0.65rem; }
