@@ -17,7 +17,20 @@ Set di esempio importabili nell'app via il bottone **IMPORT**. Ognuno è pensato
 | [`demo-ukhardcore.json`](demo-ukhardcore.json) | UK Breakbeat Hardcore '92-'93 | 140 | Pre-jungle, 4/4 rave + Amen choppato |
 | [`demo-onedrop.json`](demo-onedrop.json) | Dub / Reggae One-Drop | 80  | ★ Beat sul 3, filosofia invertita |
 
-### Break storici (ricostruzioni ritmiche)
+### ⭐ Pattern iconici (da stadio, radio, colonna sonora)
+| File | Ispirato a | Anno | BPM | Firma |
+|---|---|---|---|---|
+| [`demo-dadada.json`](demo-dadada.json)             | Da Da Da (Trio)              | 1982 | 120 | Casio VL-Tone preset, minimalismo tedesco |
+| [`demo-wewillrockyou.json`](demo-wewillrockyou.json) | We Will Rock You (Queen)   | 1977 |  81 | Stomp-stomp-CLAP universale, no batteria |
+| [`demo-sevennation.json`](demo-sevennation.json)   | Seven Nation Army (White Stripes) | 2003 | 124 | Kick minimal + tom come riff da stadio |
+| [`demo-anotherone.json`](demo-anotherone.json)     | Another One Bites the Dust (Queen) | 1980 | 110 | Rock-disco Roger Taylor |
+| [`demo-superstition.json`](demo-superstition.json) | Superstition (Stevie Wonder) | 1972 | 100 | Ghost notes funky + open hat |
+| [`demo-rosanna.json`](demo-rosanna.json)           | Rosanna (Toto, Porcaro)      | 1982 |  87 | ★ Half-time shuffle swing 62% |
+| [`demo-stayinalive.json`](demo-stayinalive.json)   | Stayin' Alive (Bee Gees)     | 1977 | 103 | Disco 4/4 + clap (ritmo RCP!) |
+| [`demo-takefive.json`](demo-takefive.json)         | Take Five (Brubeck/Morello)  | 1959 | 172 | ★ UNICO in 5/4 (patternLength 20) |
+| [`demo-wipeout.json`](demo-wipeout.json)           | Wipe Out (The Surfaris)      | 1963 | 162 | Surf drum solo 16th continui |
+
+### 🏛 Break storici (ricostruzioni ritmiche)
 | File | Ispirato a | Anno | BPM | Perché è iconico |
 |---|---|---|---|---|
 | [`demo-billiejean.json`](demo-billiejean.json)     | Billie Jean (MJ)            | 1982 | 117 | Linn LM-1 metronomica, kick sincopato |
