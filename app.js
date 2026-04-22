@@ -1205,6 +1205,9 @@
   function openDemos() {
     const m = document.getElementById('demosModal');
     if (!m) return;
+    // Aggiorna il titolo col numero corretto di demo
+    const titleEl = document.getElementById('demosTitle');
+    if (titleEl) titleEl.textContent = `DEMO LIBRARY · ${DEMO_LIBRARY.length} SET`;
     // Popola la grid se non già fatto
     const grid = document.getElementById('demosGrid');
     if (grid && grid.children.length === 0) {
